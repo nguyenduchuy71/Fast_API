@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from db import crud
 from db.database import get_db
 from schemas import item, user
+from services import oauth2
 
 router = APIRouter(
     prefix="/users",
@@ -34,6 +35,8 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 
 @router.post("/{user_id}/items/", response_model=item.Item)
 def create_item_for_user(
-    user_id: int, item: item.ItemCreate, db: Session = Depends(get_db)
+    user_id: int, item: item.ItemCreate, db: Session = Depends(get_db),
+    current_user: int = Depends(oauth2.get_current_user)
 ):
+    print(f'current_user: {current_user}')
     return crud.create_user_item(db=db, item=item, user_id=user_id)
