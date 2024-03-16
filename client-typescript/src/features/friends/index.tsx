@@ -1,6 +1,6 @@
 import ListGroup from "react-bootstrap/ListGroup";
-import { SearchItem } from "../items/SearchItem";
-import { ButtonItem } from "../items/ButtonItem";
+import { SearchItem } from "../../items/SearchItem";
+import { ButtonItem } from "../../items/ButtonItem";
 
 function FriendScreen() {
   const people = [
@@ -60,7 +60,7 @@ function FriendScreen() {
 
   return (
     <div className="w-full p-6 relative">
-      <div className="absolute top-4 right-7">
+      <div className="absolute top-7 right-10">
         <div>
           <ButtonItem
             typeButton="button"

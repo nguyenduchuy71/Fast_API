@@ -39,27 +39,28 @@ export function Sidebar() {
     },
   ];
   return (
-    <div className="top-0 h-[calc(100vh)] w-full max-w-[16rem] bg-sky-500 text-white p-2 shadow-xl shadow-blue-gray-900/5 sticky">
-      <div className="flex flex-col justify-between">
-        <ul>
-          {listMenu.map((menu) => (
+    <div className="sticky top-0 h-[calc(100vh)] w-full max-w-[16rem] bg-slate-800 text-white p-2 shadow-xl shadow-blue-gray-900/5">
+      <div className="flex flex-col">
+        {listMenu.map((menu) => (
+          <div className="p-3 hover:bg-slate-600 hover:cursor-pointer rounded-md">
             <CustomIconItem
               key={menu.name}
               name={menu.name}
               CustomIconImage={menu.icon}
               path={menu.path}
             />
-          ))}
-        </ul>
-        <ul className="fixed bottom-0">
-          <div onClick={() => logoutEpic()}>
-            <CustomIconItem
-              name="Log Out"
-              CustomIconImage={ArrowLeftEndOnRectangleIcon}
-              path="/login"
-            />
           </div>
-        </ul>
+        ))}
+        <div
+          className="p-3 hover:bg-slate-600 rounded-md"
+          onClick={() => logoutEpic()}
+        >
+          <CustomIconItem
+            name="Log Out"
+            CustomIconImage={ArrowLeftEndOnRectangleIcon}
+            path="/login"
+          />
+        </div>
       </div>
     </div>
   );

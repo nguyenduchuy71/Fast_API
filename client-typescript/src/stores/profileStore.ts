@@ -4,6 +4,7 @@ const BASEURL = "http://localhost:8000";
 
 export const useProfileStore = create((set, get) => ({
   userInfo: {},
+  error: null,
   getUserEpic: async () => {
     const accessToken = localStorage.getItem("auth");
     const headers = {

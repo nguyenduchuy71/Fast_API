@@ -1,5 +1,5 @@
-import { ImageItem } from "../items/ImageItem";
-import { UploadImage } from "../items/UploadImage";
+import { ImageItem } from "../../items/ImageItem";
+import { UploadImage } from "../../items/UploadImage";
 
 function CollectionScreen() {
   const products: any = [

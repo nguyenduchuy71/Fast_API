@@ -1,8 +1,9 @@
 import { useEffect } from "react";
-import { UserCircleIcon } from "@heroicons/react/24/solid";
-import { useProfileStore } from "../stores/profileStore";
-import { UploadImage } from "../items/UploadImage";
-import { ButtonItem } from "../items/ButtonItem";
+import { useProfileStore } from "../../stores/profileStore";
+import { UploadImage } from "../../items/UploadImage";
+import { ButtonItem } from "../../items/ButtonItem";
+import { AvatarItem } from "@/items/AvatarItem";
+import { Input } from "@/components/ui/input";
 
 export default function ProfileScreen() {
   const [getUserEpic, userInfo] = useProfileStore((state: any) => [
@@ -19,12 +20,7 @@ export default function ProfileScreen() {
           <h2 className="text-base font-semibold leading-7 text-gray-900">
             Profile
           </h2>
-          <div className="">
-            <UserCircleIcon
-              className="h-12 w-12 text-gray-300"
-              aria-hidden="true"
-            />
-          </div>
+          <AvatarItem />
         </div>
 
         <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -34,12 +30,10 @@ export default function ProfileScreen() {
             </label>
             <div className="mt-2">
               <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 sm:max-w-md">
-                <input
+                <Input
                   type="text"
                   name="username"
                   id="username"
-                  autoComplete="username"
-                  className="block flex-1 border-0 bg-transparent p-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                   value={userInfo.email}
                   disabled
                 />

@@ -12,9 +12,9 @@ export const CustomIconItem = ({
   name,
 }: ICustomIcon) => {
   return (
-    <Link to={path} className="flex">
+    <Link to={path} className="flex items-center hover:opacity-80">
       <CustomIconImage className="h-5 w-5 mr-1.5" />
-      {name}
+      <span className="ml-1">{name}</span>
     </Link>
   );
 };

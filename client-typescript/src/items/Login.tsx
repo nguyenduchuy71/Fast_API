@@ -39,7 +39,7 @@ export const Login = ({ isLogin, setIsLogin }: ILogin) => {
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-4" onSubmit={handleLogin}>
           <div>
-            <label className="block text-sm font-medium leading-6 text-gray-900">
+            <label className="mb-1 block text-sm font-medium leading-6 text-gray-900">
               Username
             </label>
             <Input
@@ -51,49 +51,44 @@ export const Login = ({ isLogin, setIsLogin }: ILogin) => {
           </div>
 
           <div>
-            <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Password
-              </label>
-            </div>
+            <label className="mb-1 block text-sm font-medium leading-6 text-gray-900">
+              Password
+            </label>
             <Input
               type="password"
               onChange={(e: any) => setPassword(e.target.value)}
               required
+              placeholder="Password"
             />
           </div>
+
           {!isLogin && (
             <div>
-              <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
-                  Confirm Password
-                </label>
-              </div>
-              <div className="mt-1">
-                <Input
-                  type="password"
-                  onChange={(e: any) => setRePassword(e.target.value)}
-                  required
-                />
-              </div>
+              <label className="mb-1 block text-sm font-medium leading-6 text-gray-900">
+                Confirm Password
+              </label>
+              <Input
+                type="password"
+                onChange={(e: any) => setRePassword(e.target.value)}
+                required
+                placeholder="Repassword"
+              />
             </div>
           )}
 
-          <div className="flex justify-center">
+          <div className="flex items-center justify-center">
             <Button variant="default">{isLogin ? "Login" : "Sign up"}</Button>
           </div>
         </form>
-
-        <p className="mt-10 text-center text-sm text-gray-500">
+        <div className="mt-8 text-center text-sm text-gray-500">
           {isLogin ? "Don't have an account?" : "Have an account?"}
           <span
             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 cursor-pointer"
             onClick={() => handleCheckLogin()}
           >
-            {" "}
             {isLogin ? "Sign up" : "Login"}
           </span>
-        </p>
+        </div>
       </div>
     </div>
   );
