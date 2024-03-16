@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers.items import router as itemRouter
@@ -25,3 +26,6 @@ app.include_router(authRouter)
 @app.get('/')
 def root():
     return {'message': "Hello, welcome to FastAPI"}
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", port=8000, log_level="debug")

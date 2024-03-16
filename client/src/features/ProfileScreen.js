@@ -13,7 +13,7 @@ export default function ProfileScreen() {
     getUserEpic();
   }, []);
   return (
-    <form className="w-full m-4">
+    <form className="w-full p-6">
       <div className="border-b border-gray-900/10 pb-12">
         <div className="flex justify-between items-center">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -39,7 +39,7 @@ export default function ProfileScreen() {
                   name="username"
                   id="username"
                   autoComplete="username"
-                  className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                  className="block flex-1 border-0 bg-transparent p-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                   value={userInfo.email}
                   disabled
                 />

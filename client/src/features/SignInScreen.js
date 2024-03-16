@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Login from "../components/Login";
 import { useAuthStore } from "../stores/authStore";
+import { useNavigate } from "react-router-dom";
 
 function SignInScreen() {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [authToken] = useAuthStore((state) => [state.authToken]);
-  if (authToken) {
-    window.location.href = "http://localhost:3000";
-  }
   useEffect(() => {
+    if (authToken) {
+      return navigate("/");
+    }
     if (window.location.href.includes("signup")) {
       setIsLogin(false);
     }

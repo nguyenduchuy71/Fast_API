@@ -7,6 +7,8 @@ import { useEffect } from "react";
 import { Sidebar } from "./components/Sidebar";
 import ProfileScreen from "./features/ProfileScreen";
 import CollectionScreen from "./features/CollectionScreen";
+import FriendScreen from "./features/FriendScreen";
+import NotifyScreen from "./features/NotifyScreen";
 
 function App() {
   const [authToken, getAuthenTokenEpic] = useAuthStore((state) => [
@@ -27,6 +29,8 @@ function App() {
             <Route path="/" index element={<MainScreen />} />
             <Route path="/collection" element={<CollectionScreen />} />
             <Route path="/profile" element={<ProfileScreen />} />
+            <Route path="/friends" element={<FriendScreen />} />
+            <Route path="/notifications" element={<NotifyScreen />} />
             <Route path="/login" element={<SignInScreen />} />
             <Route path="/signup" element={<SignInScreen />} />
           </Routes>

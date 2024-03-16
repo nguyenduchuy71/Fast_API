@@ -73,7 +73,7 @@ function MainScreen() {
   const [selected, setSelected] = useState(people[0]);
 
   return (
-    <div className="w-full m-6">
+    <div className="w-full p-6">
       <Listbox className="mx-auto" value={selected} onChange={setSelected}>
         {({ open }) => (
           <div className="relative mt-2">
