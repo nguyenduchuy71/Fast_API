@@ -1,16 +1,12 @@
 from pydantic import BaseModel
 
+class FriendBase(BaseModel):
+    friend_id: str
 
-class ItemBase(BaseModel):
-    title: str
-
-
-class ItemCreate(ItemBase):
+class FriendCreate(FriendBase):
     pass
 
-
-class Item(ItemBase):
-    id: str
+class Friend(FriendBase):
     owner_id: str
 
     class Config:

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
-const BASEURL = "http://localhost:8000";
+const BASEURL = import.meta.env.VITE_BACKEND_URL;
 
 export const useAuthStore = create((set, get) => ({
   authInfo: {},
@@ -8,16 +8,23 @@ export const useAuthStore = create((set, get) => ({
   error: null,
   loginEpic: async (credentials: any) => {
     const res = await axios.post(`${BASEURL}/login`, credentials);
-    localStorage.setItem("auth", res.data.token);
+    sessionStorage.setItem("email", credentials.email);
+    sessionStorage.setItem("auth", res.data.token);
+    set({ authToken: res.data.token });
+    set({ authInfo: { username: credentials.email } });
+  },
+  signUpEpic: async (credentials: any) => {
+    const res = await axios.post(`${BASEURL}/signup`, credentials);
+    sessionStorage.setItem("email", credentials.email);
+    sessionStorage.setItem("auth", res.data.token);
     set({ authToken: res.data.token });
     set({ authInfo: { username: credentials.email } });
   },
   logoutEpic: () => {
-    localStorage.removeItem("auth");
-    set({ authToken: null });
-    set({ authInfo: {} });
+    sessionStorage.removeItem("email");
+    sessionStorage.removeItem("auth");
   },
   getAuthenTokenEpic: () => {
-    set({ authToken: localStorage.getItem("auth") });
+    set({ authToken: sessionStorage.getItem("auth") });
   },
 }));

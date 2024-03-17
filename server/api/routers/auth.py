@@ -5,6 +5,7 @@ from schemas import token, user
 from db.models import User
 from utils.hash import verify
 from services import oauth2
+from db.crud import create_user
 
 router = APIRouter(tags=['Authentication'])
 
@@ -20,6 +21,15 @@ def login(user_credentials: user.UserLogin, db: Session = Depends(get_db)):
         if not verify(user_credentials.password, userInfo.hashed_password):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN, detail=f"Invalid Credentials")
+        access_token = oauth2.create_access_token(data={"user_id": userInfo.id})
+        return {"token": access_token, "token_type": "Bearer"}
+    except Exception as e:
+        raise e
+
+@router.post('/signup', response_model=token.Token)
+def signup(user_credentials: user.UserCreate, db: Session = Depends(get_db)):
+    try:
+        userInfo = create_user(db, user=user_credentials)
         access_token = oauth2.create_access_token(data={"user_id": userInfo.id})
         return {"token": access_token, "token_type": "Bearer"}
     except Exception as e:

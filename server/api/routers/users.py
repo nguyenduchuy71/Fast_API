@@ -2,7 +2,7 @@ from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
 from db import crud
 from db.database import get_db
-from schemas import item, user
+from schemas import item, user, friend
 from services import oauth2
 
 router = APIRouter(
@@ -23,10 +23,10 @@ def create_user(user: user.UserCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/", response_model=list[user.User])
-def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
     db_user = crud.get_user(db, user_id=current_user.id)
     if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=400, detail="User not found")
     try:
         users = crud.get_users(db, skip=skip, limit=limit)
         return users
@@ -35,7 +35,7 @@ def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), cu
 
 
 @router.get("/{user_id}", response_model=user.User)
-def get_user_by_id(user_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def get_user_by_id(user_id: int, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
     try:
         db_user = crud.get_user(db, user_id=user_id)
         if db_user is None:
@@ -45,7 +45,7 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db), current_user: in
         return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SERVER ERROR")
 
 @router.get("/profile/me", response_model=user.User)
-def get_user_profile(db: Session = Depends(get_db), current_user: int= Depends(oauth2.get_current_user)):
+def get_user_profile(db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
     try:
         db_user = crud.get_user(db, user_id=current_user.id)
         if db_user is None:
@@ -58,12 +58,39 @@ def get_user_profile(db: Session = Depends(get_db), current_user: int= Depends(o
 @router.post("/{user_id}/items/", response_model=item.Item)
 def create_item_for_user(
     user_id: int, item: item.ItemCreate, db: Session = Depends(get_db),
-    current_user: int = Depends(oauth2.get_current_user)
+    current_user = Depends(oauth2.get_current_user)
 ):
     try:
         db_user = crud.get_user(db, user_id=current_user.id)
         if db_user is None:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
         return crud.create_user_item(db=db, item=item, user_id=user_id)
+    except:
+        return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SERVER ERROR")
+
+@router.post("/addfriend", response_model=list[user.User])
+def addfriend(friend: friend.FriendBase, db: Session = Depends(get_db),
+    current_user = Depends(oauth2.get_current_user)):
+    try:
+        db_user = crud.get_user(db, user_id=current_user.id)
+        if db_user is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
+        db_friend = crud.add_friend(db, user_id=current_user.id, friend_id=friend.friend_id)
+        if db_friend is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Friend not found")
+        users = crud.get_users(db)
+        return users
+    except:
+        return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SERVER ERROR")
+
+@router.patch("/update/me", response_model=user.User)
+def updateUserInfo(userUpdate: user.UserUpdate, db: Session = Depends(get_db),
+    current_user = Depends(oauth2.get_current_user)):
+    try:
+        userInfo = crud.get_user(db, user_id=current_user.id)
+        if userInfo is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
+        db_user = crud.update_user_info(db, userUpdate, userInfo) 
+        return db_user
     except:
         return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SERVER ERROR")

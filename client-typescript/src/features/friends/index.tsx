@@ -1,62 +1,26 @@
 import ListGroup from "react-bootstrap/ListGroup";
 import { SearchItem } from "../../items/SearchItem";
 import { ButtonItem } from "../../items/ButtonItem";
+import { useEffect } from "react";
+import { useFriendStore } from "../../stores/friendStore";
 
 function FriendScreen() {
-  const people = [
-    {
-      name: "Leslie Alexander",
-      email: "leslie.alexander@example.com",
-      role: "Co-Founder / CEO",
-      imageUrl:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      lastSeen: "3h ago",
-      lastSeenDateTime: "2023-01-23T13:23Z",
-    },
-    {
-      name: "Michael Foster",
-      email: "michael.foster@example.com",
-      role: "Co-Founder / CTO",
-      imageUrl:
-        "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      lastSeen: "3h ago",
-      lastSeenDateTime: "2023-01-23T13:23Z",
-    },
-    {
-      name: "Dries Vincent",
-      email: "dries.vincent@example.com",
-      role: "Business Relations",
-      imageUrl:
-        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      lastSeen: null,
-    },
-    {
-      name: "Lindsay Walton",
-      email: "lindsay.walton@example.com",
-      role: "Front-end Developer",
-      imageUrl:
-        "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      lastSeen: "3h ago",
-      lastSeenDateTime: "2023-01-23T13:23Z",
-    },
-    {
-      name: "Courtney Henry",
-      email: "courtney.henry@example.com",
-      role: "Designer",
-      imageUrl:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      lastSeen: "3h ago",
-      lastSeenDateTime: "2023-01-23T13:23Z",
-    },
-    {
-      name: "Tom Cook",
-      email: "tom.cook@example.com",
-      role: "Director of Product",
-      imageUrl:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      lastSeen: null,
-    },
-  ];
+  const [friends, friendIds, getUsersEpic, addFriendEpic] = useFriendStore(
+    (state: any) => [
+      state.friends,
+      state.friendIds,
+      state.getUsersEpic,
+      state.addFriendEpic,
+    ]
+  );
+
+  useEffect(() => {
+    getUsersEpic();
+  }, []);
+
+  const handleAddFriend = async (userId) => {
+    await addFriendEpic(userId);
+  };
 
   return (
     <div className="w-full p-6 relative">
@@ -64,7 +28,7 @@ function FriendScreen() {
         <div>
           <ButtonItem
             typeButton="button"
-            classNameValue="rounded-md w-30 bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+            classNameValue="rounded-md w-30 bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
             nameButton="Add friends"
           />
         </div>
@@ -72,41 +36,61 @@ function FriendScreen() {
       <div className="divide-y divide-gray-200">
         <SearchItem type="search" placeholder="Search your friends" />
         <ListGroup className="mx-4">
-          {people.map((person) => (
+          {friends.map((person) => (
             <ListGroup.Item
               key={person.email}
               className="flex justify-between gap-x-6 py-5"
             >
-              <div className="flex min-w-0 gap-x-4">
+              <div className="flex items-center min-w-0 gap-x-4">
                 <img
                   className="h-12 w-12 flex-none rounded-full bg-gray-50"
-                  src={person.imageUrl}
+                  src={
+                    person.imageUrl
+                      ? person.imageUrl
+                      : "https://github.com/shadcn.png"
+                  }
                   alt=""
                 />
                 <div className="min-w-0 flex-auto">
-                  <p className="text-sm font-semibold leading-6 text-gray-900">
-                    {person.name}
-                  </p>
                   <p className="mt-1 truncate text-xs leading-5 text-gray-500">
                     {person.email}
                   </p>
                 </div>
               </div>
-              <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-                <p className="text-sm leading-6 text-gray-900">{person.role}</p>
-                {person.lastSeen ? (
-                  <p className="mt-1 text-xs leading-5 text-gray-500">
-                    Last seen{" "}
-                    <time dateTime={person.lastSeenDateTime}>
-                      {person.lastSeen}
-                    </time>
-                  </p>
+              <div className="flex flex-wrap items-center justify-center">
+                {person.isActive ? (
+                  <div className="mt-1 flex items-center gap-x-1.5">
+                    <div className="flex-none rounded-full  bg-slate-800/20 p-1">
+                      <div className="h-1.5 w-1.5 rounded-full bg-slate-800" />
+                    </div>
+                    <p className="text-xs leading-5 text-gray-500">Offlline</p>
+                  </div>
                 ) : (
                   <div className="mt-1 flex items-center gap-x-1.5">
                     <div className="flex-none rounded-full bg-emerald-500/20 p-1">
                       <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                     </div>
                     <p className="text-xs leading-5 text-gray-500">Online</p>
+                  </div>
+                )}
+                {!friendIds.includes(person.id) ? (
+                  <div className="ml-8">
+                    <ButtonItem
+                      typeButton="button"
+                      classNameValue="rounded-md w-20 bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-80"
+                      nameButton="Add"
+                      action={() => handleAddFriend(person.id)}
+                    />
+                  </div>
+                ) : (
+                  <div className="ml-8">
+                    <ButtonItem
+                      typeButton="button"
+                      classNameValue="rounded-md w-20 bg-slate-400 px-3 py-2 text-sm font-semibold text-white shadow-sm"
+                      nameButton="Added"
+                      action={() => handleAddFriend(person.id)}
+                      isDisabled={true}
+                    />
                   </div>
                 )}
               </div>

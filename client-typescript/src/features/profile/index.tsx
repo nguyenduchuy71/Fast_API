@@ -1,20 +1,36 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useProfileStore } from "../../stores/profileStore";
 import { UploadImage } from "../../items/UploadImage";
 import { ButtonItem } from "../../items/ButtonItem";
 import { AvatarItem } from "@/items/AvatarItem";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ProfileScreen() {
-  const [getUserEpic, userInfo] = useProfileStore((state: any) => [
-    state.getUserEpic,
-    state.userInfo,
-  ]);
+  const [username, setUsername] = useState("");
+  const [bio, setBio] = useState("");
+  const [getUserEpic, userInfo, updateUserInfoEpic] = useProfileStore(
+    (state: any) => [
+      state.getUserEpic,
+      state.userInfo,
+      state.updateUserInfoEpic,
+    ]
+  );
   useEffect(() => {
     getUserEpic();
+    setUsername(userInfo.username);
   }, []);
+
+  useEffect(() => {
+    setUsername(userInfo.username);
+    setBio(userInfo.bio);
+  }, [userInfo]);
+
+  const handleUpdateUserInfo = async (userInfo: any) => {
+    await updateUserInfoEpic(userInfo);
+  };
   return (
-    <form className="w-full p-6">
+    <div className="w-full p-6">
       <div className="border-b border-gray-900/10 pb-12">
         <div className="flex justify-between items-center">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -23,25 +39,54 @@ export default function ProfileScreen() {
           <AvatarItem />
         </div>
 
-        <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          <div className="sm:col-span-4">
-            <label className="block text-sm font-medium leading-6 text-gray-900">
-              Username
-            </label>
+        <div className="grid grid-cols-2">
+          <div className="flex justify-between flex-col">
+            <div>
+              <label className="block text-sm font-medium leading-6 mb-1 text-gray-900">
+                Email
+              </label>
+              <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 sm:max-w-md">
+                <Input
+                  type="text"
+                  name="email"
+                  id="email"
+                  value={userInfo.email}
+                  disabled={true}
+                />
+              </div>
+            </div>
+
             <div className="mt-2">
+              <label className="block text-sm font-medium leading-6 mb-1 text-gray-900">
+                Username
+              </label>
               <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 sm:max-w-md">
                 <Input
                   type="text"
                   name="username"
                   id="username"
-                  value={userInfo.email}
-                  disabled
+                  placeholder="Username"
+                  onChange={(e: any) => setUsername(e.target.value)}
+                  value={username}
+                />
+              </div>
+            </div>
+
+            <div className="mt-2">
+              <label className="block text-sm font-medium leading-6 mb-1 text-gray-900">
+                BIO
+              </label>
+              <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 sm:max-w-md">
+                <Textarea
+                  placeholder="Type your bio here."
+                  value={bio}
+                  onChange={(e: any) => setBio(e.target.value)}
                 />
               </div>
             </div>
           </div>
 
-          <div className="col-span-full">
+          <div className="lg:col-span-1 sm:col-span-1">
             <label className="block text-sm font-medium leading-6 text-gray-900">
               Avatar
             </label>
@@ -52,16 +97,14 @@ export default function ProfileScreen() {
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <ButtonItem
-          typeButton="button"
-          classNameValue="rounded-md w-20 bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-500"
-          nameButton="Cancel"
-        />
-        <ButtonItem
           typeButton="submit"
           classNameValue="rounded-md w-20 bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           nameButton="Save"
+          action={() =>
+            handleUpdateUserInfo({ email: userInfo.email, username, bio })
+          }
         />
       </div>
-    </form>
+    </div>
   );
 }

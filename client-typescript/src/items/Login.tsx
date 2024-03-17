@@ -9,16 +9,31 @@ interface ILogin {
 }
 
 export const Login = ({ isLogin, setIsLogin }: ILogin) => {
-  const [loginEpic] = useAuthStore((state: any) => [state.loginEpic]);
+  const [loginEpic, signUpEpic] = useAuthStore((state: any) => [
+    state.loginEpic,
+    state.signUpEpic,
+  ]);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [rePassword, setRePassword] = useState();
   const handleLogin = async (e) => {
     e.preventDefault();
-    await loginEpic({
-      email,
-      password,
-    });
+    if (isLogin) {
+      await loginEpic({
+        email,
+        password,
+      });
+    } else {
+      if (rePassword === password) {
+        await signUpEpic({
+          email,
+          password,
+        });
+      } else {
+        alert("Password not match");
+      }
+    }
+
   };
   const handleCheckLogin = () => {
     setIsLogin(!isLogin);

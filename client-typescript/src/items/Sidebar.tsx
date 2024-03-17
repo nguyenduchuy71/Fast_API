@@ -42,7 +42,10 @@ export function Sidebar() {
     <div className="sticky top-0 h-[calc(100vh)] w-full max-w-[16rem] bg-slate-800 text-white p-2 shadow-xl shadow-blue-gray-900/5">
       <div className="flex flex-col">
         {listMenu.map((menu) => (
-          <div className="p-3 hover:bg-slate-600 hover:cursor-pointer rounded-md">
+          <div
+            key={menu.name}
+            className="p-3 hover:bg-slate-600 hover:cursor-pointer rounded-md"
+          >
             <CustomIconItem
               key={menu.name}
               name={menu.name}
