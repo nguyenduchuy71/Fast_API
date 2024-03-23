@@ -12,14 +12,13 @@ export const useFriendStore = create((set, get) => ({
     const accessToken = sessionStorage.getItem("auth");
     const headers = configHeaders(accessToken);
     const res = await axios.get(`${BASEURL}/users`, { headers });
-    const userEmail = sessionStorage.getItem("email");
-    const listFriend = res.data.filter((item) => item.email !== userEmail);
-    const listFriendId = handleUpdateFriend(res.data, userEmail);
+    const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+    const listFriend = res.data.filter((item) => item.email !== userInfo.email);
+    const listFriendId = handleUpdateFriend(res.data, userInfo.email);
     set({ friends: listFriend });
     set({ friendIds: listFriendId });
   },
   addFriendEpic: async (friend_id: string) => {
-    console.log("addFriend", friend_id);
     const accessToken = sessionStorage.getItem("auth");
     const headers = configHeaders(accessToken);
     const res = await axios.post(
@@ -29,9 +28,9 @@ export const useFriendStore = create((set, get) => ({
         headers: headers,
       }
     );
-    const userEmail = sessionStorage.getItem("email");
-    const listFriend = res.data.filter((item) => item.email !== userEmail);
-    const listFriendId = handleUpdateFriend(res.data, userEmail);
+    const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+    const listFriend = res.data.filter((item) => item.email !== userInfo.email);
+    const listFriendId = handleUpdateFriend(res.data, userInfo.email);
     set({ friends: listFriend });
     set({ friendIds: listFriendId });
   },

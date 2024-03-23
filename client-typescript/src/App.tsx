@@ -2,8 +2,8 @@ import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import SignInScreen from "./features/login";
 import MainScreen from "./features/main";
-import { useAuthStore } from "./stores/authStore";
-import { useEffect } from "react";
+import { useAuthStore } from "./features/login/epic";
+import { useEffect, useState } from "react";
 import { Sidebar } from "./items/Sidebar";
 import ProfileScreen from "./features/profile";
 import CollectionScreen from "./features/collection";
@@ -11,6 +11,10 @@ import FriendScreen from "./features/friends";
 import NotifyScreen from "./features/notify";
 import NotFoundError from "./features/errors/not-found-error";
 import Footer from "./components/footer";
+import { io } from "socket.io-client";
+
+const url = import.meta.env.VITE_SOCKET_PATH;
+const socket = io(url);
 
 function App() {
   const [authToken, getAuthenTokenEpic] = useAuthStore((state: any) => [
@@ -34,7 +38,10 @@ function App() {
               <Route path="/" index element={<MainScreen />} />
               <Route path="/collection" element={<CollectionScreen />} />
               <Route path="/profile" element={<ProfileScreen />} />
-              <Route path="/friends" element={<FriendScreen />} />
+              <Route
+                path="/friends"
+                element={<FriendScreen socket={socket} />}
+              />
               <Route path="/notifications" element={<NotifyScreen />} />
               <Route path="/login" element={<SignInScreen />} />
               <Route path="/signup" element={<SignInScreen />} />

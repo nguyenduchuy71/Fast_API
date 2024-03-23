@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Login } from "../../items/Login";
-import { useAuthStore } from "../../stores/authStore";
+import { useAuthStore } from "./epic";
+import { IAuthenStore } from "./epic/interface";
 
 function SignInScreen() {
-  const [authToken] = useAuthStore((state: any) => [state.authToken]);
+  const [authToken] = useAuthStore((state: IAuthenStore) => [state.authToken]);
   const [isLogin, setIsLogin] = useState(true);
   useEffect(() => {
     if (authToken) {

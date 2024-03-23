@@ -6,7 +6,7 @@ import {
   ArrowLeftEndOnRectangleIcon,
   BellAlertIcon,
 } from "@heroicons/react/24/solid";
-import { useAuthStore } from "../stores/authStore";
+import { useAuthStore } from "../features/login/epic";
 import { CustomIconItem } from "./CustomIconItem";
 
 export function Sidebar() {

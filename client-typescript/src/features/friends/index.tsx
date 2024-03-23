@@ -2,33 +2,36 @@ import ListGroup from "react-bootstrap/ListGroup";
 import { SearchItem } from "../../items/SearchItem";
 import { ButtonItem } from "../../items/ButtonItem";
 import { useEffect } from "react";
-import { useFriendStore } from "../../stores/friendStore";
-import useWebSocket from "react-use-websocket";
-const WS_URL = "ws://localhost:8000/ws/1";
+import { useFriendStore } from "./epic";
+import { useAuthStore } from "../login/epic";
+import { IFriendStore } from "./epic/interface";
+import { IAuthenStore } from "../login/epic/interface";
 
-function FriendScreen() {
-  const socket = useWebSocket(WS_URL);
+function FriendScreen({ socket }) {
   const [friends, friendIds, getUsersEpic, addFriendEpic] = useFriendStore(
-    (state: any) => [
+    (state: IFriendStore) => [
       state.friends,
       state.friendIds,
       state.getUsersEpic,
       state.addFriendEpic,
     ]
   );
+  const [authInfo, getAuthenUserInfo] = useAuthStore((state: IAuthenStore) => [
+    state.authInfo,
+    state.getAuthenUserInfo,
+  ]);
 
   useEffect(() => {
+    getAuthenUserInfo();
     getUsersEpic();
-  }, []);
+  }, [getAuthenUserInfo, getUsersEpic]);
 
-  const handleAddFriend = async (userId) => {
-    await addFriendEpic(userId);
-    socket.sendJsonMessage(
-      JSON.stringify({
-        type: "addFriend",
-        data: userId,
-      })
-    );
+  const handleAddFriend = (userId: string) => {
+    addFriendEpic(userId);
+    socket.emit("addFriend", {
+      userId: authInfo.userId,
+      friendId: userId,
+    });
   };
 
   return (

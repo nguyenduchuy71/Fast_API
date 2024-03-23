@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useProfileStore } from "../../stores/profileStore";
+import { useProfileStore } from "./epic";
 import { UploadImage } from "../../items/UploadImage";
 import { ButtonItem } from "../../items/ButtonItem";
 import { AvatarItem } from "@/items/AvatarItem";
@@ -18,13 +18,12 @@ export default function ProfileScreen() {
   );
   useEffect(() => {
     getUserEpic();
-    setUsername(userInfo.username);
-  }, []);
+  }, [getUserEpic]);
 
   useEffect(() => {
     setUsername(userInfo.username);
     setBio(userInfo.bio);
-  }, [userInfo]);
+  }, []);
 
   const handleUpdateUserInfo = async (userInfo: any) => {
     await updateUserInfoEpic(userInfo);

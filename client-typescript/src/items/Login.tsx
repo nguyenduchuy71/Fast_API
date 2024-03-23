@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAuthStore } from "../stores/authStore";
+import { useAuthStore } from "../features/login/epic";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
