@@ -19,6 +19,7 @@ class User(Base):
 
     items = relationship("Item", back_populates="owner")
     friends = relationship("Friend", back_populates="owner")
+    notifies = relationship("Notify", back_populates="owner")
 
 
 class Item(Base):
@@ -42,3 +43,15 @@ class Friend(Base):
     is_accept_friend = Column(Boolean, default=False)
     
     owner = relationship("User", back_populates="friends")
+
+
+class Notify(Base):
+    __tablename__ = "notifies"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.generate_uuid()))
+    owner_id = Column(String, ForeignKey("users.id"), index=True)
+    content = Column(String, index=True)
+    createdAt = Column(DateTime, default=datetime.datetime.utcnow)
+    is_readed = Column(Boolean, default=False)
+    
+    owner = relationship("User", back_populates="notifies")

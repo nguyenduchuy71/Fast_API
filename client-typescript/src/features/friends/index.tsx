@@ -3,8 +3,11 @@ import { SearchItem } from "../../items/SearchItem";
 import { ButtonItem } from "../../items/ButtonItem";
 import { useEffect } from "react";
 import { useFriendStore } from "../../stores/friendStore";
+import useWebSocket from "react-use-websocket";
+const WS_URL = "ws://localhost:8000/ws/1";
 
 function FriendScreen() {
+  const socket = useWebSocket(WS_URL);
   const [friends, friendIds, getUsersEpic, addFriendEpic] = useFriendStore(
     (state: any) => [
       state.friends,
@@ -20,6 +23,12 @@ function FriendScreen() {
 
   const handleAddFriend = async (userId) => {
     await addFriendEpic(userId);
+    socket.sendJsonMessage(
+      JSON.stringify({
+        type: "addFriend",
+        data: userId,
+      })
+    );
   };
 
   return (

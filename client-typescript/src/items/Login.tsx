@@ -101,6 +101,7 @@ export const Login = ({ isLogin, setIsLogin }: ILogin) => {
             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 cursor-pointer"
             onClick={() => handleCheckLogin()}
           >
+            {" "}
             {isLogin ? "Sign up" : "Login"}
           </span>
         </div>

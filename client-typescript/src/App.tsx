@@ -17,9 +17,11 @@ function App() {
     state.authToken,
     state.getAuthenTokenEpic,
   ]);
+
   useEffect(() => {
     getAuthenTokenEpic();
   }, []);
+
   return (
     <div className="min-w-full min-h-screen duration-300">
       {!authToken ? (
@@ -27,7 +29,7 @@ function App() {
       ) : (
         <div>
           <div className="flex justify-between">
-            <Sidebar />
+            {authToken && <Sidebar />}
             <Routes>
               <Route path="/" index element={<MainScreen />} />
               <Route path="/collection" element={<CollectionScreen />} />
@@ -39,7 +41,7 @@ function App() {
               <Route path="*" element={<NotFoundError />} />
             </Routes>
           </div>
-          <Footer />
+          {authToken && <Footer />}
         </div>
       )}
     </div>

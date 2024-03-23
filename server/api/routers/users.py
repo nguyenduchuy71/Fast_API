@@ -75,7 +75,7 @@ def addfriend(friend: friend.FriendBase, db: Session = Depends(get_db),
         db_user = crud.get_user(db, user_id=current_user.id)
         if db_user is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
-        db_friend = crud.add_friend(db, user_id=current_user.id, friend_id=friend.friend_id)
+        db_friend = crud.add_friend(db, owner=current_user, friend_id=friend.friend_id)
         if db_friend is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Friend not found")
         users = crud.get_users(db)

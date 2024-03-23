@@ -18,7 +18,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100, user_id=None):
 
 def create_user(db: Session, user: user.UserCreate):
     hashed_password = hash_password(user.password)
-    db_user = models.User(email=user.email, hashed_password=hashed_password)
+    db_user = models.User(email=user.email, hashed_password=hashed_password, username=user.email)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -43,9 +43,12 @@ def update_user_info(db: Session, userUpdate: user.UserUpdate, user:user.User):
     db.refresh(user)
     return user
 
-def add_friend(db: Session, user_id: str, friend_id: str):
-    db_friend = models.Friend(friend_id=friend_id, owner_id=user_id, is_add_friend=True)
+def add_friend(db: Session, owner: models.User, friend_id: str):
+    db_friend = models.Friend(friend_id=friend_id, owner_id=owner.id, is_add_friend=True)
+    db_notify = models.Notify(owner_id=friend_id, content=f"{owner.username} want to add friend with you")
     db.add(db_friend)
+    db.add(db_notify)
     db.commit()
     db.refresh(db_friend)
+    db.refresh(db_notify)
     return db_friend
