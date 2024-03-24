@@ -1,6 +1,6 @@
 import ListGroup from "react-bootstrap/ListGroup";
-import { SearchItem } from "../../items/SearchItem";
-import { ButtonItem } from "../../items/ButtonItem";
+import { SearchItem } from "../../components/SearchItem";
+import { ButtonItem } from "../../components/ButtonItem";
 import { useEffect } from "react";
 import { useFriendStore } from "./epic";
 import { useAuthStore } from "../login/epic";
@@ -22,15 +22,18 @@ function FriendScreen({ socket }) {
   ]);
 
   useEffect(() => {
-    getAuthenUserInfo();
     getUsersEpic();
-  }, [getAuthenUserInfo, getUsersEpic]);
+  }, [getUsersEpic]);
+
+  useEffect(() => {
+    getAuthenUserInfo();
+  }, [getAuthenUserInfo]);
 
   const handleAddFriend = (userId: string) => {
     addFriendEpic(userId);
     socket.emit("addFriend", {
-      userId: authInfo.userId,
       friendId: userId,
+      message: `${authInfo.email} sent you a friend invite.`,
     });
   };
 

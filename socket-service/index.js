@@ -16,15 +16,12 @@ const socketIO = require("socket.io")(http, {
 });
 
 socketIO.on("connection", (socket) => {
-  console.log(`⚡ Someone just connected!`);
-
   socket.on("addFriend", (data) => {
-    console.log(">>> addFriend:", data);
+    socketIO.emit(`notify/${data.friendId}`, data.message);
   });
 
   socket.on("disconnect", () => {
     socket.disconnect();
-    console.log("🔥 A user disconnected");
   });
 });
 

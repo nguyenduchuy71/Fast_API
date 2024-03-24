@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Login } from "../../items/Login";
+import { Login } from "../../components/Login";
 import { useAuthStore } from "./epic";
 import { IAuthenStore } from "./epic/interface";
 

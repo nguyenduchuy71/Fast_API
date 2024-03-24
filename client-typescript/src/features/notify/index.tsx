@@ -1,69 +1,35 @@
+import { useEffect } from "react";
+import { useNotifyStore } from "./epic";
+import { formatDateTime } from "@/lib/utils";
+import { INotifyStore } from "./epic/interface";
+import EmptyData from "@/components/EmptyData";
+
 function NotifyScreen() {
+  const [notify, getNotifyEpic] = useNotifyStore((state: INotifyStore) => [
+    state.notify,
+    state.getNotifyEpic,
+  ]);
+  useEffect(() => {
+    getNotifyEpic();
+  }, [getNotifyEpic]);
+
   return (
     <div className="w-full flex flex-col p-6 gap-4 text-lg">
-      <div className="bg-gray-100 flex-grow text-black border-l-8 border-green-500 rounded-md px-3 py-2 w-full">
-        Computer Science Engineering
-        <div className="text-gray-500 font-thin text-sm pt-1">
-          <span>Topics: 63</span>
-          <span>MCQs: 20697</span>
-        </div>
-      </div>
-      <div className="bg-gray-100 flex-grow text-black border-l-8 border-green-500 rounded-md px-3 py-2 w-full">
-        Mechanical Engineering
-        <div className="text-gray-500 font-thin text-sm">
-          <span>Topics: 48</span>
-          <span>MCQs: 18222</span>
-        </div>
-      </div>
-      <div className="bg-gray-100 flex-grow text-black border-l-8 border-green-500 rounded-md px-3 py-2 w-full">
-        Civil Engineering
-        <div className="text-gray-500 font-thin text-sm">
-          <span>Topics: 55</span>
-          <span>MCQs: 14783</span>
-        </div>
-      </div>
-      <div className="bg-gray-100 flex-grow text-black border-l-8 border-green-500 rounded-md px-3 py-2 w-full">
-        Information Technology Engineering
-        <div className="text-gray-500 font-thin text-sm">
-          <span>Topics: 26</span>
-          <span>MCQs: 8818</span>
-        </div>
-      </div>
-      <div className="bg-gray-100 flex-grow text-black border-l-8 border-green-500 rounded-md px-3 py-2 w-full">
-        Electrical Engineering
-        <div className="text-gray-500 font-thin text-sm">
-          <span>Topics: 40</span>
-          <span>MCQs: 9584</span>
-        </div>
-      </div>
-      <div className="bg-gray-100 flex-grow text-black border-l-8 border-green-500 rounded-md px-3 py-2 w-full">
-        Electronics and Communication Engineering
-        <div className="text-gray-500 font-thin text-sm">
-          <span>Topics: 8</span>
-          <span>MCQs: 2576</span>
-        </div>
-      </div>
-      <div className="bg-gray-100 flex-grow text-black border-l-8 border-green-500 rounded-md px-3 py-2 w-full">
-        Electronics and Telecommunication Engineering
-        <div className="text-gray-500 font-thin text-sm">
-          <span>Topics: 5</span>
-          <span>MCQs: 1739</span>
-        </div>
-      </div>
-      <div className="bg-gray-100 flex-grow text-black border-l-8 border-green-500 rounded-md px-3 py-2 w-full">
-        Biomedical Engineering
-        <div className="text-gray-500 font-thin text-sm">
-          <span>Topics: 1</span>
-          <span>MCQs: 217</span>
-        </div>
-      </div>
-      <div className="bg-gray-100 flex-grow text-black border-l-8 border-green-500 rounded-md px-3 py-2 w-full">
-        Manufacturing Engineering
-        <div className="text-gray-500 font-thin text-sm">
-          <span>Topics: 1</span>
-          <span>MCQs: 154</span>
-        </div>
-      </div>
+      {notify.length > 0 ? (
+        notify.map((item) => (
+          <div
+            key={item.id}
+            className="bg-gray-100 text-black border-l-8 border-green-500 rounded-md px-3 py-2 w-full"
+          >
+            {item.content}
+            <div className="text-gray-500 font-thin text-sm pt-1">
+              <span>Created at: {formatDateTime(item.createdAt)}</span>
+            </div>
+          </div>
+        ))
+      ) : (
+        <EmptyData message={"Empty notify"} />
+      )}
     </div>
   );
 }

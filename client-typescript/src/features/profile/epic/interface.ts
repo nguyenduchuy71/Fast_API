@@ -1,8 +1,6 @@
-export interface IFriendStore {
-    friends: any[];
-    friendIds: string[];
-    error: any;
-    getUsersEpic: () => void;
-    addFriendEpic: (friendId: string) => void;
-  }
-  
+export interface IProfileStore {
+  userInfo: any;
+  error: any;
+  getUserEpic: () => void;
+  updateUserInfoEpic: (userUpdate: any) => void;
+}

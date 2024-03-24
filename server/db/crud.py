@@ -52,3 +52,6 @@ def add_friend(db: Session, owner: models.User, friend_id: str):
     db.refresh(db_friend)
     db.refresh(db_notify)
     return db_friend
+
+def get_notifies(db: Session, owner_id: str = None, skip: int = 0, limit: int = 100):
+    return db.query(models.Notify).order_by(models.Notify.createdAt.desc()).filter(models.Notify.owner_id == owner_id).offset(skip).limit(limit).all()

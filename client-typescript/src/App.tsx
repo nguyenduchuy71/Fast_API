@@ -1,10 +1,12 @@
 import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
+import { IAuthenStore } from "./features/login/epic/interface";
 import { Routes, Route } from "react-router-dom";
 import SignInScreen from "./features/login";
 import MainScreen from "./features/main";
 import { useAuthStore } from "./features/login/epic";
-import { useEffect, useState } from "react";
-import { Sidebar } from "./items/Sidebar";
+import { Sidebar } from "./components/Sidebar";
 import ProfileScreen from "./features/profile";
 import CollectionScreen from "./features/collection";
 import FriendScreen from "./features/friends";
@@ -12,19 +14,29 @@ import NotifyScreen from "./features/notify";
 import NotFoundError from "./features/errors/not-found-error";
 import Footer from "./components/footer";
 import { io } from "socket.io-client";
+import { ToastContainer } from "react-toastify";
+import { triggerNotify } from "@/utils/messages";
 
 const url = import.meta.env.VITE_SOCKET_PATH;
 const socket = io(url);
 
 function App() {
-  const [authToken, getAuthenTokenEpic] = useAuthStore((state: any) => [
-    state.authToken,
-    state.getAuthenTokenEpic,
-  ]);
+  const [authToken, getAuthenTokenEpic] = useAuthStore(
+    (state: IAuthenStore) => [state.authToken, state.getAuthenTokenEpic]
+  );
 
   useEffect(() => {
     getAuthenTokenEpic();
-  }, []);
+  }, [getAuthenTokenEpic]);
+
+  useEffect(() => {
+    const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+    if (userInfo) {
+      socket.on(`notify/${userInfo.userId}`, (data) => {
+        triggerNotify(data);
+      });
+    }
+  }, [socket]);
 
   return (
     <div className="min-w-full min-h-screen duration-300">
@@ -49,6 +61,7 @@ function App() {
             </Routes>
           </div>
           {authToken && <Footer />}
+          <ToastContainer />
         </div>
       )}
     </div>

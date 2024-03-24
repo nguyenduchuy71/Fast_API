@@ -6,6 +6,7 @@ from db.models import User
 from utils.hash import verify
 from services import oauth2
 from db.crud import create_user
+from config.logger import logger
 
 router = APIRouter(tags=['Authentication'])
 
@@ -23,8 +24,9 @@ def login(user_credentials: user.UserLogin, db: Session = Depends(get_db)):
                 status_code=status.HTTP_403_FORBIDDEN, detail=f"Invalid Credentials")
         access_token = oauth2.create_access_token(data={"user_id": userInfo.id})
         return {"token": access_token, "userId": userInfo.id, "token_type": "Bearer"}
-    except Exception as e:
-        raise e
+    except Exception as error:
+        logger.error(error)
+        return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SERVER ERROR")
 
 @router.post('/signup', response_model=token.Token)
 def signup(user_credentials: user.UserCreate, db: Session = Depends(get_db)):
@@ -32,5 +34,6 @@ def signup(user_credentials: user.UserCreate, db: Session = Depends(get_db)):
         userInfo = create_user(db, user=user_credentials)
         access_token = oauth2.create_access_token(data={"user_id": userInfo.id})
         return {"token": access_token, "token_type": "Bearer", "userId": userInfo.id}
-    except Exception as e:
-        raise e
+    except Exception as error:
+        logger.error(error)
+        return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SERVER ERROR")

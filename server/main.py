@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.routers.items import router as itemRouter
 from api.routers.users import router as userRouter
 from api.routers.auth import router as authRouter
+from api.routers.notify import router as notifyRouter
 from db.database import engine
 from db import models
 
@@ -22,6 +23,7 @@ app.add_middleware(
 app.include_router(itemRouter)
 app.include_router(userRouter)
 app.include_router(authRouter)
+app.include_router(notifyRouter)
     
 @app.get('/')
 def root():

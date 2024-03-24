@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuthStore } from "../features/login/epic";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { IAuthenStore } from "../features/login/epic/interface";
 
 interface ILogin {
   isLogin: boolean;
@@ -9,7 +10,7 @@ interface ILogin {
 }
 
 export const Login = ({ isLogin, setIsLogin }: ILogin) => {
-  const [loginEpic, signUpEpic] = useAuthStore((state: any) => [
+  const [loginEpic, signUpEpic] = useAuthStore((state: IAuthenStore) => [
     state.loginEpic,
     state.signUpEpic,
   ]);
@@ -33,7 +34,6 @@ export const Login = ({ isLogin, setIsLogin }: ILogin) => {
         alert("Password not match");
       }
     }
-
   };
   const handleCheckLogin = () => {
     setIsLogin(!isLogin);

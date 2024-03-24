@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import { triggerNotify } from "@/utils/messages";
 const BASEURL = import.meta.env.VITE_BACKEND_URL;
 
 export const useAuthStore = create((set) => ({
@@ -16,6 +17,7 @@ export const useAuthStore = create((set) => ({
     sessionStorage.setItem("auth", res.data.token);
     set({ authToken: res.data.token });
     set({ authInfo: userInfo });
+    triggerNotify("Login successful");
   },
   signUpEpic: async (credentials: any) => {
     const res = await axios.post(`${BASEURL}/signup`, credentials);
@@ -28,6 +30,7 @@ export const useAuthStore = create((set) => ({
     sessionStorage.setItem("auth", res.data.token);
     set({ authToken: res.data.token });
     set({ authInfo: userInfo });
+    triggerNotify("Sign up successful");
   },
   logoutEpic: () => {
     sessionStorage.removeItem("userInfo");
@@ -37,6 +40,6 @@ export const useAuthStore = create((set) => ({
     set({ authToken: sessionStorage.getItem("auth") });
   },
   getAuthenUserInfo: () => {
-    set({ authInfo: sessionStorage.getItem("userInfo") || {} });
+    set({ authInfo: JSON.parse(sessionStorage.getItem("userInfo")) || {} });
   },
 }));

@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { useProfileStore } from "./epic";
-import { UploadImage } from "../../items/UploadImage";
-import { ButtonItem } from "../../items/ButtonItem";
-import { AvatarItem } from "@/items/AvatarItem";
+import { UploadImage } from "../../components/UploadImage";
+import { ButtonItem } from "../../components/ButtonItem";
+import { AvatarItem } from "@/components/AvatarItem";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { IProfileStore } from "./epic/interface";
 
 export default function ProfileScreen() {
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [getUserEpic, userInfo, updateUserInfoEpic] = useProfileStore(
-    (state: any) => [
+    (state: IProfileStore) => [
       state.getUserEpic,
       state.userInfo,
       state.updateUserInfoEpic,
@@ -23,10 +24,10 @@ export default function ProfileScreen() {
   useEffect(() => {
     setUsername(userInfo.username);
     setBio(userInfo.bio);
-  }, []);
+  }, [userInfo]);
 
-  const handleUpdateUserInfo = async (userInfo: any) => {
-    await updateUserInfoEpic(userInfo);
+  const handleUpdateUserInfo = (userInfo: any) => {
+    updateUserInfoEpic(userInfo);
   };
   return (
     <div className="w-full p-6">
