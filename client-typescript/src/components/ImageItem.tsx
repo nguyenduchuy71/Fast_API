@@ -9,7 +9,7 @@ export const ImageItem = ({ imageSrc, imageAlt }: IImgaeItem) => {
       <img
         src={imageSrc}
         alt={imageAlt}
-        className="h-full w-full object-cover object-center group-hover:opacity-90"
+        className="h-60 w-60 object-contain group-hover:opacity-90"
       />
     </div>
   );

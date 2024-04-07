@@ -2,9 +2,10 @@ import { create } from "zustand";
 import axios from "axios";
 import { handleUpdateFriend } from "@/utils/handleFriend";
 import { configHeaders, handleErrorStatus } from "@/utils/helpers";
+import { IFriendStore } from "./interface";
 const BASEURL = import.meta.env.VITE_BACKEND_URL;
 
-export const useFriendStore = create((set) => ({
+export const useFriendStore = create<IFriendStore>((set) => ({
   friends: [],
   friendIds: [],
   error: null,

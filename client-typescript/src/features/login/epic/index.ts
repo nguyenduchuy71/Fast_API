@@ -1,9 +1,10 @@
 import { create } from "zustand";
 import axios from "axios";
 import { triggerNotify } from "@/utils/messages";
+import { IAuthenStore } from "./interface";
 const BASEURL = import.meta.env.VITE_BACKEND_URL;
 
-export const useAuthStore = create((set) => ({
+export const useAuthStore = create<IAuthenStore>((set) => ({
   authInfo: {},
   authToken: null,
   error: null,

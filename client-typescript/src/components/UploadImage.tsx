@@ -1,9 +1,9 @@
 import { PhotoIcon } from "@heroicons/react/24/solid";
 
-export const UploadImage = () => {
+export const UploadImage = ({ files, handleFileChange }) => {
   return (
     <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-      <div className="text-center">
+      <div className="text-center cursor-default">
         <PhotoIcon
           className="mx-auto h-12 w-12 text-gray-300"
           aria-hidden="true"
@@ -13,19 +13,21 @@ export const UploadImage = () => {
             htmlFor="file-upload"
             className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
           >
-            <span>Upload a file</span>
+            <span>Upload images</span>
             <input
               id="file-upload"
               name="file-upload"
               type="file"
               className="sr-only"
+              onChange={handleFileChange}
+              accept="image/*"
+              multiple
             />
           </label>
-          <p className="pl-1">or drag and drop</p>
+          <span className="pl-1">or drag and drop</span>
         </div>
-        <p className="text-xs leading-5 text-gray-600">
-          PNG, JPG, GIF up to 10MB
-        </p>
+        <p className="text-xs leading-5 text-gray-600">PNG, JPG</p>
+        <p className="text-xs leading-5 text-gray-600">{files.length} files</p>
       </div>
     </div>
   );

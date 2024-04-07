@@ -25,15 +25,23 @@ def create_user(db: Session, user: user.UserCreate):
     return db_user
 
 
-def get_items(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Item).offset(skip).limit(limit).all()
-
+def get_user_item(db: Session, user_id: str):
+    return db.query(models.Item).order_by(models.Item.createdAt.desc()).filter(models.Item.owner_id == user_id).all()
 
 def create_user_item(db: Session, item: item.ItemCreate, user_id: str):
-    db_item = models.Item(**item.dict(), owner_id=user_id)
-    db.add(db_item)
-    db.commit()
-    db.refresh(db_item)
+    db_item = db.query(models.Item).filter(models.Item.owner_id == user_id).filter(models.Item.title == item['title']).first()
+    if not db_item:
+        db_item = models.Item(**item, owner_id=user_id)
+        db.add(db_item)
+        db.commit()
+        db.refresh(db_item)
+    return db_item
+
+def delete_user_item(db: Session, ownerId:str, itemPath: str):
+    db_item = db.query(models.Item).filter(models.Item.owner_id==ownerId).filter(models.Item.title==itemPath).first()
+    if db_item:
+        db.delete(db_item)
+        db.commit()
     return db_item
 
 def update_user_info(db: Session, userUpdate: user.UserUpdate, user:user.User):

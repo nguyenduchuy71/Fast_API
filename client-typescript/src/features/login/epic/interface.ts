@@ -1,8 +1,5 @@
 export interface IAuthenStore {
-  authInfo: {
-    email: string;
-    userId: string;
-  };
+  authInfo: any;
   authToken: string;
   loginEpic: (credentials: any) => void;
   signUpEpic: (credentials: any) => void;

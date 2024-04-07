@@ -1,56 +1,81 @@
-import { ImageItem } from "../../components/ImageItem";
-import { UploadImage } from "../../components/UploadImage";
+import { XCircleIcon } from "@heroicons/react/24/solid";
+import { ChangeEvent, useState, useEffect } from "react";
+import { ButtonItem } from "@/components/ButtonItem";
+import { ImageItem } from "@/components/ImageItem";
+import { UploadImage } from "@/components/UploadImage";
+import { useCollectionStore } from "./epic";
+import { ICollectionStore } from "./epic/interface";
 
 function CollectionScreen() {
-  const products: any = [
-    {
-      id: 1,
-      imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-01.jpg",
-      imageAlt:
-        "Tall slender porcelain bottle with natural clay textured body and cork stopper.",
-    },
-    {
-      id: 2,
-      imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-02.jpg",
-      imageAlt:
-        "Olive drab green insulated bottle with flared screw lid and flat top.",
-    },
-    {
-      id: 3,
-      imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-03.jpg",
-      imageAlt:
-        "Person using a pen to cross a task off a productivity paper card.",
-    },
-    {
-      id: 4,
-      imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-04.jpg",
-      imageAlt:
-        "Hand holding black machined steel mechanical pencil with brass tip and top.",
-    },
-  ];
+  const [
+    collections,
+    uploadCollectionEpic,
+    getCollectionEpic,
+    deteleCollectionEpic,
+  ] = useCollectionStore((state: ICollectionStore) => [
+    state.collections,
+    state.uploadCollectionEpic,
+    state.getCollectionEpic,
+    state.deteleCollectionEpic,
+  ]);
+  const [files, setFiles] = useState([]);
+
+  useEffect(() => {
+    getCollectionEpic();
+  }, [getCollectionEpic]);
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFiles(Array.from(e.target.files));
+    } else return;
+  };
+
+  const handleUploadFiles = (e) => {
+    e.preventDefault();
+    uploadCollectionEpic(files);
+    setFiles([]);
+  };
+
+  const handleDeleteCollection = (imagePath) => {
+    deteleCollectionEpic(imagePath);
+  };
+
   return (
-    <div className="mx-auto max-w-2xl p-6 sm:px-6 sm:py-10 lg:max-w-7xl lg:px-8">
+    <div className="w-full h-full overflow-hidden mx-auto max-w-2xl p-6 sm:px-6 sm:py-10 lg:max-w-7xl lg:px-8">
       <div>
         <p className="mb-4 text-pretty text-lg font-semibold">
           Upload new images
         </p>
-        <UploadImage />
+        <form onSubmit={handleUploadFiles} className="flex flex-col">
+          <UploadImage files={files} handleFileChange={handleFileChange} />
+          <div className="mt-4 flex justify-end">
+            <ButtonItem
+              typeButton="submit"
+              classNameValue="rounded-md w-30 bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+              nameButton="Upload"
+            />
+          </div>
+        </form>
       </div>
 
-      <div className="my-10">
+      <div className="my-2">
         <p className="mb-4 text-pretty text-lg font-semibold">Your images</p>
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-          {products.map((product) => (
-            <ImageItem
-              key={product.id}
-              imageSrc={product.imageSrc}
-              imageAlt={product.imageAlt}
-            />
-          ))}
+          {collections.map((collection) => {
+            return (
+              <div key={collection.fullPath} className="relative">
+                <XCircleIcon
+                  onClick={() => handleDeleteCollection(collection.fullPath)}
+                  className="w-5 h-5 cursor-pointer absolute right-0 bottom-full hover:opacity-70"
+                />
+                <ImageItem
+                  key={collection.fullPath}
+                  imageSrc={collection.srcImage}
+                  imageAlt={collection.name}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

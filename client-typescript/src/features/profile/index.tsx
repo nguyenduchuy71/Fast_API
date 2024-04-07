@@ -90,7 +90,7 @@ export default function ProfileScreen() {
             <label className="block text-sm font-medium leading-6 text-gray-900">
               Avatar
             </label>
-            <UploadImage />
+            <UploadImage handleFileChange={() => {}} />
           </div>
         </div>
       </div>

@@ -2,10 +2,11 @@ import { create } from "zustand";
 import axios from "axios";
 import { configHeaders, handleErrorStatus } from "@/utils/helpers";
 import { triggerNotify } from "@/utils/messages";
+import { IProfileStore } from "./interface";
 
 const BASEURL = import.meta.env.VITE_BACKEND_URL;
 
-export const useProfileStore = create((set) => ({
+export const useProfileStore = create<IProfileStore>((set) => ({
   userInfo: {},
   error: null,
   getUserEpic: async () => {

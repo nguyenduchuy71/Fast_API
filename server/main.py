@@ -1,10 +1,10 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers.items import router as itemRouter
 from api.routers.users import router as userRouter
 from api.routers.auth import router as authRouter
 from api.routers.notify import router as notifyRouter
+from api.routers.collection import router as collectionRouter
 from db.database import engine
 from db import models
 
@@ -20,11 +20,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(itemRouter)
 app.include_router(userRouter)
 app.include_router(authRouter)
 app.include_router(notifyRouter)
-    
+app.include_router(collectionRouter)
+
 @app.get('/')
 def root():
     return {'message': "Hello, welcome to FastAPI"}

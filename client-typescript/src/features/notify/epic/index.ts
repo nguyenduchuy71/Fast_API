@@ -1,9 +1,10 @@
 import { create } from "zustand";
 import axios from "axios";
 import { configHeaders, handleErrorStatus } from "@/utils/helpers";
+import { INotifyStore } from "./interface";
 const BASEURL = import.meta.env.VITE_BACKEND_URL;
 
-export const useNotifyStore = create((set) => ({
+export const useNotifyStore = create<INotifyStore>((set) => ({
   notify: [],
   error: null,
   getNotifyEpic: async () => {
