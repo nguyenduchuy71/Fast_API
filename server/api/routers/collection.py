@@ -1,5 +1,5 @@
-import firebase_admin
 import os
+import firebase_admin
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, status, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
@@ -47,13 +47,13 @@ def post_collections(files: list[UploadFile] = File(...), db: Session = Depends(
             crud.create_user_item(db=db, item=item, user_id=current_user.id)
             destination_blob_name = f"{current_user.id}/{file.filename}"
             upload_file(bucket, file, destination_blob_name)
-        return status.HTTP_200_OK
+        return destination_blob_name
     except Exception as error:
         logger.error(error)
         return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SERVER ERROR")
 
 @router.delete("/{ownerId}/{imagePath}")
-def delete_collections(ownerId: str, imagePath: str ,db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+def delete_collections(ownerId: str, imagePath: str , db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
     try:
         db_user = crud.get_user(db, user_id=current_user.id)
         if db_user is None:

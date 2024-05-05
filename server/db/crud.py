@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 
 from . import models
 from schemas import item, user
@@ -47,6 +48,7 @@ def delete_user_item(db: Session, ownerId:str, itemPath: str):
 def update_user_info(db: Session, userUpdate: user.UserUpdate, user:user.User):
     user.bio = userUpdate.bio
     user.username = userUpdate.username
+    user.avatar = userUpdate.avatar
     db.commit()
     db.refresh(user)
     return user
@@ -61,5 +63,26 @@ def add_friend(db: Session, owner: models.User, friend_id: str):
     db.refresh(db_notify)
     return db_friend
 
+def accept_friend(db: Session, owner: models.User, friend_id: str):
+    friend = db.query(models.Friend).filter(models.Friend.owner_id==friend_id).filter(models.Friend.friend_id==owner.id).first()
+    if friend:
+        friend.is_accept_friend = True
+        notify = models.Notify(owner_id=friend_id, content=f"{friend_id} accpeted your friend invite")
+        db.add(notify)
+        db.commit()
+        db.refresh(friend)
+        db.refresh(notify)
+    return friend
+
 def get_notifies(db: Session, owner_id: str = None, skip: int = 0, limit: int = 100):
     return db.query(models.Notify).order_by(models.Notify.createdAt.desc()).filter(models.Notify.owner_id == owner_id).offset(skip).limit(limit).all()
+
+def get_friends_by_user(db: Session, user_id: str):
+    friends = db.query(models.Friend).filter(or_(models.Friend.owner_id == user_id, models.Friend.friend_id == user_id)).all()
+    ids = []
+    for friend in friends:
+        if user_id != friend.owner_id:
+            ids.append(friend.owner_id)
+        elif user_id != friend.friend_id:
+            ids.append(friend.friend_id)
+    return db.query(models.User).filter(models.User.id.in_(set(ids))).all()

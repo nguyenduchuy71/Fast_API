@@ -48,6 +48,18 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db), current_user = D
         logger.error(error)
         return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SERVER ERROR")
 
+@router.get("/friends/me", response_model=list[user.User])
+def get_user_friends(db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+    try:
+        db_user = crud.get_user(db, user_id=current_user.id)
+        if db_user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        friends = crud.get_friends_by_user(db, user_id=current_user.id)
+        return friends
+    except Exception as error:
+        logger.error(error)
+        return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SERVER ERROR")
+
 @router.get("/profile/me", response_model=user.User)
 def get_user_profile(db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
     try:
@@ -75,13 +87,29 @@ def create_item_for_user(
         return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SERVER ERROR")
 
 @router.post("/addfriend", response_model=list[user.User])
-def addfriend(friend: friend.FriendBase, db: Session = Depends(get_db),
+def addFriend(friend: friend.FriendBase, db: Session = Depends(get_db),
     current_user = Depends(oauth2.get_current_user)):
     try:
         db_user = crud.get_user(db, user_id=current_user.id)
         if db_user is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
         db_friend = crud.add_friend(db, owner=current_user, friend_id=friend.friend_id)
+        if db_friend is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Friend not found")
+        users = crud.get_users(db)
+        return users
+    except Exception as error:
+        logger.error(error)
+        return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SERVER ERROR")
+
+@router.post("/acceptfriend", response_model=list[user.User])
+def acceptFriend(friend: friend.FriendBase, db: Session = Depends(get_db),
+    current_user = Depends(oauth2.get_current_user)):
+    try:
+        db_user = crud.get_user(db, user_id=current_user.id)
+        if db_user is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
+        db_friend = crud.accept_friend(db, owner=current_user, friend_id=friend.friend_id)
         if db_friend is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Friend not found")
         users = crud.get_users(db)

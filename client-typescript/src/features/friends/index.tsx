@@ -8,13 +8,14 @@ import { IFriendStore } from "./epic/interface";
 import { IAuthenStore } from "../login/epic/interface";
 
 function FriendScreen({ socket }) {
-  const [friends, friendIds, getUsersEpic, addFriendEpic] = useFriendStore(
+  const [friends, friendIds, getUsersEpic, addFriendEpic, acceptFriendEpic] = useFriendStore(
     (state: IFriendStore) => [
       state.friends,
       state.friendIds,
       state.getUsersEpic,
       state.addFriendEpic,
-    ]
+      state.acceptFriendEpic,
+    ],
   );
   const [authInfo, getAuthenUserInfo] = useAuthStore((state: IAuthenStore) => [
     state.authInfo,
@@ -23,7 +24,7 @@ function FriendScreen({ socket }) {
 
   useEffect(() => {
     getUsersEpic();
-  }, [getUsersEpic]);
+  }, [getUsersEpic, socket]);
 
   useEffect(() => {
     getAuthenUserInfo();
@@ -31,49 +32,39 @@ function FriendScreen({ socket }) {
 
   const handleAddFriend = (userId: string) => {
     addFriendEpic(userId);
-    socket.emit("addFriend", {
+    socket.emit('addFriend', {
       friendId: userId,
       message: `${authInfo.email} sent you a friend invite.`,
     });
   };
 
+  const handleAcceptFriend = (userId: string) => {
+    acceptFriendEpic(userId);
+    socket.emit('addFriend', {
+      friendId: userId,
+      message: `${authInfo.email} accept your friend invite.`,
+    });
+  };
+
   return (
     <div className="w-full p-6 relative">
-      <div className="absolute top-7 right-10">
-        <div>
-          <ButtonItem
-            typeButton="button"
-            classNameValue="rounded-md w-30 bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-            nameButton="Add friends"
-          />
-        </div>
-      </div>
       <div className="divide-y divide-gray-200">
         <SearchItem type="search" placeholder="Search your friends" />
         <ListGroup className="mx-4">
-          {friends.map((person) => (
-            <ListGroup.Item
-              key={person.email}
-              className="flex justify-between gap-x-6 py-5"
-            >
+          {friends.map((friend) => (
+            <ListGroup.Item key={friend.email} className="flex justify-between gap-x-6 py-5">
               <div className="flex items-center min-w-0 gap-x-4">
                 <img
-                  className="h-12 w-12 flex-none rounded-full bg-gray-50"
-                  src={
-                    person.imageUrl
-                      ? person.imageUrl
-                      : "https://github.com/shadcn.png"
-                  }
-                  alt=""
+                  className="h-12 w-12 object-cover flex-none rounded-full bg-gray-50"
+                  src={friend.avatar ? friend.avatar : 'https://github.com/shadcn.png'}
+                  alt="Friend's avatar"
                 />
                 <div className="min-w-0 flex-auto">
-                  <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                    {person.email}
-                  </p>
+                  <p className="mt-1 truncate text-xs leading-5 text-gray-500">{friend.email}</p>
                 </div>
               </div>
               <div className="flex flex-wrap items-center justify-center">
-                {person.isActive ? (
+                {friend.isActive ? (
                   <div className="mt-1 flex items-center gap-x-1.5">
                     <div className="flex-none rounded-full  bg-slate-800/20 p-1">
                       <div className="h-1.5 w-1.5 rounded-full bg-slate-800" />
@@ -88,24 +79,30 @@ function FriendScreen({ socket }) {
                     <p className="text-xs leading-5 text-gray-500">Online</p>
                   </div>
                 )}
-                {!friendIds.includes(person.id) ? (
+                {!friendIds.includes(friend.id) && (
                   <div className="ml-8">
-                    <ButtonItem
-                      typeButton="button"
-                      classNameValue="rounded-md w-20 bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-80"
-                      nameButton="Add"
-                      action={() => handleAddFriend(person.id)}
-                    />
-                  </div>
-                ) : (
-                  <div className="ml-8">
-                    <ButtonItem
-                      typeButton="button"
-                      classNameValue="rounded-md w-20 bg-slate-400 px-3 py-2 text-sm font-semibold text-white shadow-sm"
-                      nameButton="Added"
-                      action={() => handleAddFriend(person.id)}
-                      isDisabled={true}
-                    />
+                    {friend.friends.findIndex((item) => item.friend_id === authInfo.userId) !==
+                    -1 ? (
+                      <div>
+                        {friend.friends
+                          .filter((item) => item.friend_id === authInfo.userId)
+                          .findIndex((item) => item.is_accept_friend) === -1 && (
+                          <ButtonItem
+                            typeButton="button"
+                            classNameValue="rounded-md w-20 bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-80"
+                            nameButton="Accept"
+                            action={() => handleAcceptFriend(friend.id)}
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      <ButtonItem
+                        typeButton="button"
+                        classNameValue="rounded-md w-20 bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-80"
+                        nameButton="Add"
+                        action={() => handleAddFriend(friend.id)}
+                      />
+                    )}
                   </div>
                 )}
               </div>

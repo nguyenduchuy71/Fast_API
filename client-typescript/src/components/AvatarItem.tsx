@@ -1,9 +1,13 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
-export function AvatarItem() {
+export function AvatarItem({ avatar }) {
   return (
     <Avatar>
-      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+      <AvatarImage
+        src={avatar ? avatar : "https://github.com/shadcn.png"}
+        alt="avatar-image"
+        loading="lazy"
+      />
     </Avatar>
   );
 }

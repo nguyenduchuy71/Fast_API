@@ -4,6 +4,7 @@ interface IButton {
   nameButton: string;
   action?: any;
   isDisabled?: boolean;
+  isHidden?: boolean;
 }
 
 export const ButtonItem = ({
@@ -12,15 +13,13 @@ export const ButtonItem = ({
   nameButton,
   action = null,
   isDisabled = false,
+  isHidden = false,
 }: IButton) => {
   return (
-    <button
-      onClick={action}
-      disabled={isDisabled}
-      type={typeButton}
-      className={classNameValue}
-    >
-      {nameButton}
-    </button>
+    !isHidden && (
+      <button onClick={action} disabled={isDisabled} type={typeButton} className={classNameValue}>
+        {nameButton}
+      </button>
+    )
   );
 };

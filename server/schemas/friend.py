@@ -8,6 +8,8 @@ class FriendCreate(FriendBase):
 
 class Friend(FriendBase):
     owner_id: str
+    is_add_friend: bool
+    is_accept_friend: bool
 
     class Config:
         from_attributes = True

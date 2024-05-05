@@ -1,15 +1,29 @@
+import { useState } from 'react';
+
 interface IImgaeItem {
   imageSrc: string;
   imageAlt: string;
+  isSelected: boolean;
+  setSelectedItem: any;
 }
 
-export const ImageItem = ({ imageSrc, imageAlt }: IImgaeItem) => {
+export const ImageItem = ({ imageSrc, imageAlt, isSelected, setSelectedItem }: IImgaeItem) => {
+  const [isHidden, setIsHidden] = useState(isSelected);
+  const handleSelectedItem = () => {
+    console.log(isHidden);
+    if (isHidden) {
+      setIsHidden(false);
+      setSelectedItem(null);
+    }
+  };
   return (
-    <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
+    <div>
       <img
+        onClick={() => handleSelectedItem()}
         src={imageSrc}
         alt={imageAlt}
-        className="h-60 w-60 object-contain group-hover:opacity-90"
+        loading="lazy"
+        className={`h-60 w-60 object-cover rounded-lg ${isHidden ? 'p-0' : 'p-2'}`}
       />
     </div>
   );

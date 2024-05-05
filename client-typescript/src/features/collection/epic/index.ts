@@ -48,9 +48,28 @@ export const useCollectionStore = create<ICollectionStore>((set, get) => ({
       const headers = configHeaders(accessToken, "multipart/form-data");
       const formData = new FormData();
       files.forEach((file) => formData.append("files", file));
-      await axios.post(`${BASEURL}/collections`, formData, {
+      const res = await axios.post(`${BASEURL}/collections`, formData, {
         headers,
       });
+      const imagePath: string = res.data;
+      const listImage = await storage.ref().child(imagePath.split('/')[0]);
+      listImage
+        .list()
+        .then((result) => {
+          result.items.forEach(async (imageRef) => {
+            const srcImage = await imageRef.getDownloadURL();
+            imageRef.getMetadata().then((metadata) => {
+              if (metadata.fullPath === imagePath) {
+                const newCollections = [...get().collections, { ...metadata, srcImage }];
+                set({ collections: newCollections });
+                return;
+              }
+            });
+          });
+        })
+        .catch((error) => {
+          set({ error });
+        });
       triggerNotify("Upload collections successfull");
     } catch (error) {
       handleErrorStatus(error);

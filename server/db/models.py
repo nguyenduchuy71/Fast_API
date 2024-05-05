@@ -14,6 +14,7 @@ class User(Base):
     hashed_password = Column(String)
     username = Column(String, index=True, default="")
     bio = Column(String, default="")
+    avatar = Column(String, default="https://github.com/shadcn.png")
     is_active = Column(Boolean, default=True)
     createdAt = Column(DateTime, default=datetime.datetime.utcnow)
 

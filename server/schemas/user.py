@@ -10,12 +10,14 @@ class UserCreate(UserBase):
 class UserUpdate(UserBase):
     username: str
     bio: str
+    avatar: str
 
 class User(UserBase):
     id: str
     is_active: bool
     username: str
     bio: str
+    avatar: str
     items: list[item.Item] = []
     friends: list[friend.Friend] = []
 
