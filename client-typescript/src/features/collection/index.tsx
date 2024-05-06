@@ -17,13 +17,19 @@ function CollectionScreen() {
     state.getFriendsEpic,
   ]);
 
-  const [collections, uploadCollectionEpic, getCollectionEpic, deteleCollectionEpic] =
-    useCollectionStore((state: ICollectionStore) => [
-      state.collections,
-      state.uploadCollectionEpic,
-      state.getCollectionEpic,
-      state.deteleCollectionEpic,
-    ]);
+  const [
+    collections,
+    uploadCollectionEpic,
+    getCollectionEpic,
+    deteleCollectionEpic,
+    shareImageEpic,
+  ] = useCollectionStore((state: ICollectionStore) => [
+    state.collections,
+    state.uploadCollectionEpic,
+    state.getCollectionEpic,
+    state.deteleCollectionEpic,
+    state.shareImageEpic,
+  ]);
   const [files, setFiles] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showModal, setShowModal] = useState(null);
@@ -56,6 +62,10 @@ function CollectionScreen() {
     deteleCollectionEpic(imagePath);
   };
 
+  const handleShareImage = (item, friendId) => {
+    shareImageEpic(item, friendId);
+  };
+
   return (
     <div className="w-full h-full overflow-hidden mx-auto max-w-2xl p-6 sm:px-6 sm:py-10 lg:max-w-7xl lg:px-8">
       <div>
@@ -83,7 +93,13 @@ function CollectionScreen() {
             action={() => setShowModal(true)}
             isHidden={selectedItem ? false : true}
           />
-          <Modal friends={friends} showModal={showModal} setShowModal={setShowModal} />
+          <Modal
+            friends={friends}
+            showModal={showModal}
+            setShowModal={setShowModal}
+            selectedItem={selectedItem}
+            action={handleShareImage}
+          />
         </div>
         {collections.length > 0 ? (
           <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
@@ -102,7 +118,6 @@ function CollectionScreen() {
                       isSelected={
                         selectedItem && collection.fullPath === selectedItem.fullPath ? true : false
                       }
-                      setSelectedItem={setSelectedItem}
                     />
                   </div>
                 </div>

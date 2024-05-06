@@ -12,13 +12,13 @@ export const useCollectionStore = create<ICollectionStore>((set, get) => ({
   error: null,
   getCollectionEpic: async () => {
     try {
-      const accessToken = sessionStorage.getItem("auth");
+      const accessToken = sessionStorage.getItem('auth');
       const headers = configHeaders(accessToken);
       const res = await axios.get(`${BASEURL}/collections`, {
         headers,
       });
       const data: [] = res.data;
-      const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+      const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
       const listImage = await storage.ref().child(userInfo.userId);
       let list_storage_image = [];
       listImage
@@ -44,10 +44,10 @@ export const useCollectionStore = create<ICollectionStore>((set, get) => ({
   },
   uploadCollectionEpic: async (files) => {
     try {
-      const accessToken = sessionStorage.getItem("auth");
-      const headers = configHeaders(accessToken, "multipart/form-data");
+      const accessToken = sessionStorage.getItem('auth');
+      const headers = configHeaders(accessToken, 'multipart/form-data');
       const formData = new FormData();
-      files.forEach((file) => formData.append("files", file));
+      files.forEach((file) => formData.append('files', file));
       const res = await axios.post(`${BASEURL}/collections`, formData, {
         headers,
       });
@@ -70,24 +70,48 @@ export const useCollectionStore = create<ICollectionStore>((set, get) => ({
         .catch((error) => {
           set({ error });
         });
-      triggerNotify("Upload collections successfull");
+      triggerNotify('Upload collections successfull');
     } catch (error) {
       handleErrorStatus(error);
     }
   },
   deteleCollectionEpic: async (imagePath: string) => {
     try {
-      const accessToken = sessionStorage.getItem("auth");
+      const accessToken = sessionStorage.getItem('auth');
       const headers = configHeaders(accessToken);
       const res = await axios.delete(`${BASEURL}/collections/${imagePath}`, {
         headers,
       });
       if (res.data === 204) {
         const updateCollections = get().collections.filter(
-          (collection) => collection.fullPath !== imagePath
+          (collection) => collection.fullPath !== imagePath,
         );
         set({ collections: updateCollections });
-        triggerNotify("Remove image successfull");
+        triggerNotify('Remove image successfull');
+      }
+    } catch (error) {
+      handleErrorStatus(error);
+    }
+  },
+  shareImageEpic: async (item, friendId) => {
+    try {
+      debugger;
+      const accessToken = sessionStorage.getItem('auth');
+      const headers = configHeaders(accessToken);
+      const itemShare = {
+        srcImage: item.srcImage,
+      }
+      const res = await axios.post(
+        `${BASEURL}/collections/share/${friendId}`,
+        {
+          ...itemShare
+        },
+        {
+          headers,
+        },
+      );
+      if(res.status === 200){
+        triggerNotify('Share image successfull');
       }
     } catch (error) {
       handleErrorStatus(error);

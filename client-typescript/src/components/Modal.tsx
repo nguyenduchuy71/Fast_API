@@ -1,6 +1,10 @@
 import DropBoxFriend from './DropBoxFriend';
 
-export default function Modal({ friends, showModal, setShowModal }) {
+export default function Modal({ friends, showModal, setShowModal, selectedItem, action }) {
+  const handleAction = () => {
+    action(selectedItem, friends[0].id);
+    setShowModal(false);
+  };
   return (
     <>
       {showModal ? (
@@ -30,7 +34,7 @@ export default function Modal({ friends, showModal, setShowModal }) {
                     <div className="items-center gap-2 mt-3 sm:flex">
                       <button
                         className="w-0.5 mt-2 p-2.5 flex-1 text-white bg-green-600 rounded-md outline-none ring-offset-2 ring-green-600 focus:ring-2"
-                        onClick={() => setShowModal(false)}
+                        onClick={() => handleAction()}
                       >
                         Share
                       </button>

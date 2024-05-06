@@ -21,6 +21,7 @@ class User(Base):
     items = relationship("Item", back_populates="owner")
     friends = relationship("Friend", back_populates="owner")
     notifies = relationship("Notify", back_populates="owner")
+    usershareitems = relationship("UserShareItem", back_populates="owner")
 
 
 class Item(Base):
@@ -56,3 +57,14 @@ class Notify(Base):
     is_readed = Column(Boolean, default=False)
     
     owner = relationship("User", back_populates="notifies")
+
+class UserShareItem(Base):
+    __tablename__ = "usershareitems"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.generate_uuid()))
+    owner_id = Column(String, ForeignKey("users.id"), index=True)
+    friend_id = Column(String, index=True)
+    item_id = Column(String, index=True)
+    createdAt = Column(DateTime, default=datetime.datetime.utcnow)
+    
+    owner = relationship("User", back_populates="usershareitems")
