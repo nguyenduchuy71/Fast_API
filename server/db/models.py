@@ -64,7 +64,7 @@ class UserShareItem(Base):
     id = Column(String, primary_key=True, default=lambda: str(uuid.generate_uuid()))
     owner_id = Column(String, ForeignKey("users.id"), index=True)
     friend_id = Column(String, index=True)
-    item_id = Column(String, index=True)
+    imageShare = Column(String, index=True)
     createdAt = Column(DateTime, default=datetime.datetime.utcnow)
     
     owner = relationship("User", back_populates="usershareitems")

@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import DropBoxFriend from './DropBoxFriend';
 
 export default function Modal({ friends, showModal, setShowModal, selectedItem, action }) {
+  const [selectedFriend, setSelectedFriend] = useState(null);
   const handleAction = () => {
     action(selectedItem, friends[0].id);
     setShowModal(false);
@@ -24,7 +26,7 @@ export default function Modal({ friends, showModal, setShowModal, selectedItem, 
                     </p>
                     <div className="w-full mt-2">
                       {friends.length > 0 ? (
-                        <DropBoxFriend friends={friends} />
+                        <DropBoxFriend friends={friends} setSelectedFriend={setSelectedFriend} />
                       ) : (
                         <p className="mt-2 text-[15px] leading-relaxed text-gray-500">
                           You don't have friend

@@ -130,3 +130,16 @@ def updateUserInfo(userUpdate: user.UserUpdate, db: Session = Depends(get_db),
     except Exception as error:
         logger.error(error)
         return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SERVER ERROR")
+
+@router.get("/share/{friendId}")
+def get_share_user_image(friendId: str, db: Session = Depends(get_db),
+    current_user = Depends(oauth2.get_current_user)):
+    try:
+        userInfo = crud.get_user(db, user_id=current_user.id)
+        if userInfo is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
+        db_user = crud.get_share_friend_item(db, current_user.id, friendId) 
+        return db_user
+    except Exception as error:
+        logger.error(error)
+        return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SERVER ERROR")

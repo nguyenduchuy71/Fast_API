@@ -112,7 +112,6 @@ function CollectionScreen() {
                   />
                   <div onClick={() => handleSelectedItem(collection)}>
                     <ImageItem
-                      key={collection.fullPath}
                       imageSrc={collection.srcImage}
                       imageAlt={collection.name}
                       isSelected={

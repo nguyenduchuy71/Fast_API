@@ -88,8 +88,11 @@ def get_friends_by_user(db: Session, user_id: str):
     return db.query(models.User).filter(models.User.id.in_(set(ids))).all()
 
 def share_friend_item(db: Session, user_id: str, friend_id: str, srcImage: str):
-    db_share = models.UserShareItem(owner_id=user_id, friend_id=friend_id, item_id=srcImage)
+    db_share = models.UserShareItem(owner_id=user_id, friend_id=friend_id, imageShare=srcImage)
     db.add(db_share)
     db.commit()
     db.refresh(db_share)
     return db_share
+
+def get_share_friend_item(db: Session, user_id: str, friend_id: str):
+    return db.query(models.UserShareItem).filter(models.UserShareItem.owner_id==user_id).filter(models.UserShareItem.friend_id==friend_id).all()
