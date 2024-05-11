@@ -11,7 +11,7 @@ app.use(cors());
 
 const socketIO = require("socket.io")(http, {
   cors: {
-    origin: process.env.FRONTEND_URL,
+    origin: '*',
   },
 });
 

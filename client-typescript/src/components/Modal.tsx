@@ -6,6 +6,7 @@ export default function Modal({ friends, showModal, setShowModal, selectedItem, 
   const handleAction = () => {
     action(selectedItem, friends[0].id);
     setShowModal(false);
+    console.log(selectedFriend)
   };
   return (
     <>
