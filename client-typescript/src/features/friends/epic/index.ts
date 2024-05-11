@@ -14,11 +14,13 @@ export const useFriendStore = create<IFriendStore>((set) => ({
       const accessToken = sessionStorage.getItem('auth');
       const headers = configHeaders(accessToken);
       const res = await axios.get(`${BASEURL}/users`, { headers });
-      const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
-      const listFriend = res.data.filter((item) => item.email !== userInfo.email);
-      const listFriendId = handleUpdateFriend(res.data, userInfo.email);
-      set({ friends: listFriend });
-      set({ friendIds: listFriendId });
+      if (res.status === 200) {
+        const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+        const listFriend = res.data.filter((item) => item.email !== userInfo.email);
+        const listFriendId = handleUpdateFriend(res.data, userInfo.email);
+        set({ friends: listFriend });
+        set({ friendIds: listFriendId });
+      }
     } catch (error) {
       handleErrorStatus(error);
     }
@@ -34,13 +36,15 @@ export const useFriendStore = create<IFriendStore>((set) => ({
           headers: headers,
         }
       );
-      const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
-      const listFriend = res.data.filter(
-        (item) => item.email !== userInfo.email
-      );
-      const listFriendId = handleUpdateFriend(res.data, userInfo.email);
-      set({ friends: listFriend });
-      set({ friendIds: listFriendId });
+      if (res.status === 200) {
+        const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+        const listFriend = res.data.filter(
+          (item) => item.email !== userInfo.email
+        );
+        const listFriendId = handleUpdateFriend(res.data, userInfo.email);
+        set({ friends: listFriend });
+        set({ friendIds: listFriendId });
+      }
     } catch (error) {
       handleErrorStatus(error);
     }
@@ -56,13 +60,13 @@ export const useFriendStore = create<IFriendStore>((set) => ({
           headers: headers,
         },
       );
-      const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
-      const listFriend = res.data.filter(
-        (item) => item.email !== userInfo.email
-      );
-      const listFriendId = handleUpdateFriend(res.data, userInfo.email);
-      set({ friends: listFriend });
-      set({ friendIds: listFriendId });
+      if (res.status === 200) {
+        const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+        const listFriend = res.data.filter((item) => item.email !== userInfo.email);
+        const listFriendId = handleUpdateFriend(res.data, userInfo.email);
+        set({ friends: listFriend });
+        set({ friendIds: listFriendId });
+      }
     } catch (error) {
       handleErrorStatus(error);
     }

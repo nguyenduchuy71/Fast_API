@@ -12,7 +12,6 @@ def get_user(db: Session, user_id: str):
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
-
 def get_users(db: Session, skip: int = 0, limit: int = 100, user_id=None):
     return db.query(models.User).filter(models.User.id != user_id).offset(skip).limit(limit).all()
 
@@ -95,4 +94,6 @@ def share_friend_item(db: Session, user_id: str, friend_id: str, srcImage: str):
     return db_share
 
 def get_share_friend_item(db: Session, user_id: str, friend_id: str):
-    return db.query(models.UserShareItem).filter(models.UserShareItem.owner_id==user_id).filter(models.UserShareItem.friend_id==friend_id).all()
+    listUserShareOwner = db.query(models.UserShareItem).filter(models.UserShareItem.owner_id==user_id).filter(models.UserShareItem.friend_id==friend_id).all()
+    listUserShareFriend = db.query(models.UserShareItem).filter(models.UserShareItem.owner_id==friend_id).filter(models.UserShareItem.friend_id==user_id).all()
+    return list(set(listUserShareOwner + listUserShareFriend))

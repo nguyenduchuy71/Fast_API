@@ -16,7 +16,9 @@ export const useShareStore = create<IShareStore>((set) => ({
       const res = await axios.get(`${BASEURL}/users/friends/me`, { headers });
       const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
       const listFriend = res.data.filter((item) => item.email !== userInfo.email);
-      set({ friends: listFriend });
+      if (res.status === 200) {
+        set({ friends: listFriend });
+      }
       set({ isLoading: true });
     } catch (error) {
       handleErrorStatus(error);
@@ -27,7 +29,9 @@ export const useShareStore = create<IShareStore>((set) => ({
       const accessToken = sessionStorage.getItem('auth');
       const headers = configHeaders(accessToken);
       const res = await axios.get(`${BASEURL}/users/share/${friendId}`, { headers });
-      set({ shareImages: res.data });
+      if (res.status === 200) {
+        set({ shareImages: res.data });
+      }
       set({ isLoading: true });
     } catch (error) {
       handleErrorStatus(error);

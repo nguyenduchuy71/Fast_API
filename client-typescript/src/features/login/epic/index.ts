@@ -27,11 +27,11 @@ export const useAuthStore = create<IAuthenStore>((set) => ({
       userId: res.data.userId,
     });
 
-    sessionStorage.setItem("userInfo", userInfo);
-    sessionStorage.setItem("auth", res.data.token);
+    sessionStorage.setItem('userInfo', userInfo);
+    sessionStorage.setItem('auth', res.data.token);
     set({ authToken: res.data.token });
     set({ authInfo: userInfo });
-    triggerNotify("Sign up successful");
+    triggerNotify('Sign up successful');
   },
   logoutEpic: () => {
     sessionStorage.removeItem("userInfo");

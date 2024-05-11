@@ -16,7 +16,9 @@ export const useProfileStore = create<IProfileStore>((set) => ({
       const accessToken = sessionStorage.getItem('auth');
       const headers = configHeaders(accessToken);
       const res = await axios.get(`${BASEURL}/users/profile/me`, { headers });
-      set({ userInfo: res.data });
+      if (res.status === 200) {
+        set({ userInfo: res.data });
+      }
     } catch (error) {
       handleErrorStatus(error);
     }
@@ -39,8 +41,10 @@ export const useProfileStore = create<IProfileStore>((set) => ({
         { ...userInfoUpdate },
         { headers },
       );
-      set({ userInfo: res.data });
-      triggerNotify('Save profile successfull');
+      if (res.status === 200) {
+        set({ userInfo: res.data });
+        triggerNotify('Save profile successfull');
+      }
     } catch (error) {
       handleErrorStatus(error);
     }

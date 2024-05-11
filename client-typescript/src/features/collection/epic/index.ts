@@ -17,27 +17,29 @@ export const useCollectionStore = create<ICollectionStore>((set, get) => ({
       const res = await axios.get(`${BASEURL}/collections`, {
         headers,
       });
-      const data: [] = res.data;
-      const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
-      const listImage = await storage.ref().child(userInfo.userId);
-      let list_storage_image = [];
-      listImage
-        .list()
-        .then((result) => {
-          result.items.forEach(async (imageRef) => {
-            const srcImage = await imageRef.getDownloadURL();
-            imageRef.getMetadata().then((metadata) => {
-              const metadataImage = { ...metadata, srcImage };
-              list_storage_image = [...list_storage_image, metadataImage];
-              if (data.length === list_storage_image.length) {
-                set({ collections: list_storage_image });
-              }
+      if (res.status === 200) {
+        const data: [] = res.data;
+        const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+        const listImage = await storage.ref().child(userInfo.userId);
+        let list_storage_image = [];
+        listImage
+          .list()
+          .then((result) => {
+            result.items.forEach(async (imageRef) => {
+              const srcImage = await imageRef.getDownloadURL();
+              imageRef.getMetadata().then((metadata) => {
+                const metadataImage = { ...metadata, srcImage };
+                list_storage_image = [...list_storage_image, metadataImage];
+                if (data.length === list_storage_image.length) {
+                  set({ collections: list_storage_image });
+                }
+              });
             });
+          })
+          .catch((error) => {
+            set({ error });
           });
-        })
-        .catch((error) => {
-          set({ error });
-        });
+      }
     } catch (error) {
       handleErrorStatus(error);
     }
@@ -51,26 +53,28 @@ export const useCollectionStore = create<ICollectionStore>((set, get) => ({
       const res = await axios.post(`${BASEURL}/collections`, formData, {
         headers,
       });
-      const imagePath: string = res.data;
-      const listImage = await storage.ref().child(imagePath.split('/')[0]);
-      listImage
-        .list()
-        .then((result) => {
-          result.items.forEach(async (imageRef) => {
-            const srcImage = await imageRef.getDownloadURL();
-            imageRef.getMetadata().then((metadata) => {
-              if (metadata.fullPath === imagePath) {
-                const newCollections = [...get().collections, { ...metadata, srcImage }];
-                set({ collections: newCollections });
-                return;
-              }
+      if(res.status === 200){
+        const imagePath: string = res.data;
+        const listImage = await storage.ref().child(imagePath.split('/')[0]);
+        listImage
+          .list()
+          .then((result) => {
+            result.items.forEach(async (imageRef) => {
+              const srcImage = await imageRef.getDownloadURL();
+              imageRef.getMetadata().then((metadata) => {
+                if (metadata.fullPath === imagePath) {
+                  const newCollections = [...get().collections, { ...metadata, srcImage }];
+                  set({ collections: newCollections });
+                  return;
+                }
+              });
             });
+          })
+          .catch((error) => {
+            set({ error });
           });
-        })
-        .catch((error) => {
-          set({ error });
-        });
-      triggerNotify('Upload collections successfull');
+        triggerNotify('Upload collections successfull');
+      }
     } catch (error) {
       handleErrorStatus(error);
     }
@@ -95,7 +99,6 @@ export const useCollectionStore = create<ICollectionStore>((set, get) => ({
   },
   shareImageEpic: async (item, friendId) => {
     try {
-      debugger;
       const accessToken = sessionStorage.getItem('auth');
       const headers = configHeaders(accessToken);
       const itemShare = {

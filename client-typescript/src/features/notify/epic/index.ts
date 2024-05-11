@@ -12,7 +12,9 @@ export const useNotifyStore = create<INotifyStore>((set) => ({
       const accessToken = sessionStorage.getItem("auth");
       const headers = configHeaders(accessToken);
       const res = await axios.get(`${BASEURL}/notifies/me`, { headers });
-      set({ notify: res.data });
+      if (res.data === 200) {
+        set({ notify: res.data });
+      }
     } catch (error) {
       handleErrorStatus(error);
     }

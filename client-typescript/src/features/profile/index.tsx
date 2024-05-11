@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
-import { useProfileStore } from "./epic";
-import { UploadImage } from '@/components/UploadImage';
+import { useEffect, useState, useRef } from 'react';
+import { useProfileStore } from './epic';
 import { ButtonItem } from '@/components/ButtonItem';
-import { AvatarItem } from '@/components/AvatarItem';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { IProfileStore } from './epic/interface';
+import { CameraIcon } from '@heroicons/react/24/solid';
 
 export default function ProfileScreen() {
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [avatar, setAvatar] = useState(null);
+  const fileInputRef = useRef(null);
+  const [newAvatar, setNewAvatar] = useState(null);
   const [userInfo, getUserEpic, updateUserInfoEpic] = useProfileStore((state: IProfileStore) => [
     state.userInfo,
     state.getUserEpic,
@@ -31,19 +32,25 @@ export default function ProfileScreen() {
   };
 
   const handleChangeAvatar = (e) => {
-    setAvatar(e.target.files[0]);
+    const file = e.target.files[0];
+    setNewAvatar(file);
+    setAvatar(URL.createObjectURL(file));
   };
+
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <div className="w-full p-6">
       <div className="border-b border-gray-900/10 pb-12">
         <div className="flex justify-between items-center">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Profile</h2>
-          <AvatarItem avatar={avatar} />
         </div>
 
         <div className="grid grid-cols-2">
-          <div className="flex justify-between flex-col">
-            <div>
+          <div className="flex flex-col lg:col-span-1 sm:col-span-full">
+            <div className="w-full">
               <label className="block text-sm font-medium leading-6 mb-1 text-gray-900">
                 Email
               </label>
@@ -52,7 +59,7 @@ export default function ProfileScreen() {
               </div>
             </div>
 
-            <div className="mt-4">
+            <div className="mt-4 w-full">
               <label className="block text-sm font-medium leading-6 mb-1 text-gray-900">
                 Username
               </label>
@@ -68,7 +75,7 @@ export default function ProfileScreen() {
               </div>
             </div>
 
-            <div className="mt-4">
+            <div className="mt-4 w-full">
               <label className="block text-sm font-medium leading-6 mb-1 text-gray-900">BIO</label>
               <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 sm:max-w-md">
                 <Textarea
@@ -80,9 +87,26 @@ export default function ProfileScreen() {
             </div>
           </div>
 
-          <div className="lg:col-span-1 sm:col-span-1">
+          <div className="flex flex-col items-center justify-between lg:col-span-1 sm:col-span-full">
             <label className="block text-sm font-medium leading-6 text-gray-900">Avatar</label>
-            <UploadImage handleFileChange={handleChangeAvatar} />
+            <img
+              src={avatar ? avatar : 'https://github.com/shadcn.png'}
+              className="w-48 h-48 rounded-full object-cover inline-block"
+              alt="Avatar"
+            />
+            <input
+              id="file-upload"
+              name="file-upload"
+              type="file"
+              ref={fileInputRef}
+              onChange={handleChangeAvatar}
+              accept="image/*"
+              multiple={false}
+              className="hidden"
+            />
+            <button onClick={handleClick}>
+              <CameraIcon className="h-8 w-8 hover:opacity-100 opacity-80 text-amber-500" />
+            </button>
           </div>
         </div>
       </div>
@@ -97,7 +121,7 @@ export default function ProfileScreen() {
               email: userInfo.email,
               username,
               bio,
-              avatar,
+              avatar: newAvatar ? newAvatar : avatar,
             })
           }
         />
