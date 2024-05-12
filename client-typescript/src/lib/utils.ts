@@ -27,7 +27,6 @@ export const uploadFile = (file: File, pathUpload: string, storage: any): Promis
       (snapshot) => {
         // Handle progress (optional)
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log('Upload is ' + progress + '% done');
       },
       (error) => {
         // Handle unsuccessful uploads

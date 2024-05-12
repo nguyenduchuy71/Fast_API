@@ -15,3 +15,10 @@ export const handleErrorStatus = (error: any) => {
     window.location.href = "/login";
   }
 };
+
+export const handleSortListObjectCollection = (listItem: any[]) => {
+  return listItem.sort((a, b) => {
+    if (a.updated > b.updated) return -1;
+    return 1;
+  });
+};

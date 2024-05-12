@@ -20,6 +20,7 @@ interface IItem {
 
 export interface ICollectionStore {
   collections: IItem[];
+  isLoading: boolean;
   error: any;
   getCollectionEpic: () => void;
   uploadCollectionEpic: (userUpdate: any) => void;

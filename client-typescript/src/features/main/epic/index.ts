@@ -8,7 +8,7 @@ export const useShareStore = create<IShareStore>((set) => ({
   friends: [],
   shareImages: [],
   error: null,
-  isLoading: false,
+  isLoading: true,
   getFriendsEpic: async () => {
     try {
       const accessToken = sessionStorage.getItem('auth');
@@ -19,7 +19,7 @@ export const useShareStore = create<IShareStore>((set) => ({
       if (res.status === 200) {
         set({ friends: listFriend });
       }
-      set({ isLoading: true });
+      set({ isLoading: false });
     } catch (error) {
       handleErrorStatus(error);
     }
@@ -30,9 +30,14 @@ export const useShareStore = create<IShareStore>((set) => ({
       const headers = configHeaders(accessToken);
       const res = await axios.get(`${BASEURL}/users/share/${friendId}`, { headers });
       if (res.status === 200) {
-        set({ shareImages: res.data });
+        let listShareImage = res.data;
+        listShareImage = listShareImage.sort((a, b) => {
+          if (a.createdAt > b.createdAt) return -1;
+          return 1;
+        });
+        set({ shareImages: listShareImage });
       }
-      set({ isLoading: true });
+      set({ isLoading: false });
     } catch (error) {
       handleErrorStatus(error);
     }

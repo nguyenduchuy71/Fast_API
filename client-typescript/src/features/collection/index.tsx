@@ -3,12 +3,13 @@ import { ChangeEvent, useState, useEffect } from "react";
 import { ButtonItem } from "@/components/ButtonItem";
 import { ImageItem } from "@/components/ImageItem";
 import { UploadImage } from "@/components/UploadImage";
-import { useCollectionStore } from "./epic";
-import { ICollectionStore } from "./epic/interface";
+import { useCollectionStore } from './epic';
+import { ICollectionStore } from './epic/interface';
 import EmptyData from '@/components/EmptyData';
 import Modal from '@/components/Modal';
 import { IShareStore } from '../main/epic/interface';
 import { useShareStore } from '../main/epic/index';
+import { Loading } from '@/components/Loading';
 
 function CollectionScreen() {
   const [friends, isLoading, getFriendsEpic] = useShareStore((state: IShareStore) => [
@@ -19,12 +20,14 @@ function CollectionScreen() {
 
   const [
     collections,
+    isCollectionLoading,
     uploadCollectionEpic,
     getCollectionEpic,
     deteleCollectionEpic,
     shareImageEpic,
   ] = useCollectionStore((state: ICollectionStore) => [
     state.collections,
+    state.isLoading,
     state.uploadCollectionEpic,
     state.getCollectionEpic,
     state.deteleCollectionEpic,
@@ -36,7 +39,7 @@ function CollectionScreen() {
 
   useEffect(() => {
     getCollectionEpic();
-  }, [getCollectionEpic]);
+  }, [getCollectionEpic, isCollectionLoading]);
 
   useEffect(() => {
     getFriendsEpic();
@@ -101,30 +104,40 @@ function CollectionScreen() {
             action={handleShareImage}
           />
         </div>
-        {collections.length > 0 ? (
-          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-            {collections.map((collection) => {
-              return (
-                <div key={collection.fullPath} className="relative">
-                  <XCircleIcon
-                    onClick={() => handleDeleteCollection(collection.fullPath)}
-                    className="w-5 h-5 cursor-pointer absolute right-0 bottom-full hover:opacity-70"
-                  />
-                  <div onClick={() => handleSelectedItem(collection)}>
-                    <ImageItem
-                      imageSrc={collection.srcImage}
-                      imageAlt={collection.name}
-                      isSelected={
-                        selectedItem && collection.fullPath === selectedItem.fullPath ? true : false
-                      }
-                    />
-                  </div>
-                </div>
-              );
-            })}
+        {!isCollectionLoading ? (
+          <div>
+            {collections.length > 0 ? (
+              <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+                {collections.map((collection) => {
+                  return (
+                    <div key={collection.fullPath} className="relative">
+                      <XCircleIcon
+                        onClick={() => handleDeleteCollection(collection.fullPath)}
+                        className="w-5 h-5 cursor-pointer absolute right-0 bottom-full hover:opacity-70"
+                      />
+                      <div onClick={() => handleSelectedItem(collection)}>
+                        <ImageItem
+                          imageSrc={collection.srcImage}
+                          imageAlt={collection.name}
+                          isSelected={
+                            selectedItem && collection.fullPath === selectedItem.fullPath
+                              ? true
+                              : false
+                          }
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <EmptyData message={'Empty collection'} />
+            )}
           </div>
         ) : (
-          <EmptyData message={'Empty collection'} />
+          <div className="flex items-center justify-center">
+            <Loading />
+          </div>
         )}
       </div>
     </div>

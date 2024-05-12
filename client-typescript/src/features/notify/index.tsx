@@ -21,14 +21,14 @@ function NotifyScreen() {
             key={item.id}
             className="bg-gray-100 text-black border-l-8 border-green-500 rounded-md px-3 py-2 w-full"
           >
-            {item.content}
-            <div className="text-gray-500 font-thin text-sm pt-1">
-              <span>Created at: {formatDateTime(item.createdAt)}</span>
+            <p>{item.content}</p>
+            <div className="text-gray-500 font-thin text-sm">
+              <span>{formatDateTime(item.createdAt)}</span>
             </div>
           </div>
         ))
       ) : (
-        <EmptyData message={"Empty notify"} />
+        <EmptyData message={'Empty notify'} />
       )}
     </div>
   );
